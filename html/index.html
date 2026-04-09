@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cx-hud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="cinebar cinebar-top hidden"    id="cinebarTop"></div>
+  <div class="cinebar cinebar-bottom hidden" id="cinebarBottom"></div>
+
+  <div id="hud" class="hidden">
+
+    <div class="top-left">
+      <div class="glass tl-card">
+        <div class="char-portrait" id="comp-portrait">
+          <div class="portrait-frame">
+            <img id="portraitImg" class="portrait-img hidden" src="" alt="">
+            <i class="fa-solid fa-user portrait-icon" id="portraitIcon"></i>
+          </div>
+        </div>
+        <div class="tl-info">
+          <div class="tl-name-row" id="comp-charname">
+            <strong class="tl-charname" id="charName">Player</strong>
+          </div>
+          <div class="tl-row" id="comp-voice">
+            <span class="voice-dot" id="voiceDot"></span>
+            <span class="tl-label">Voice</span>
+            <strong class="tl-val" id="voiceMode">Normal</strong>
+          </div>
+          <div class="tl-row hidden" id="comp-playerid">
+            <span class="tl-label">ID</span>
+            <strong class="tl-val" id="playerId" style="color:var(--accent);font-size:13px;">1</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="top-right">
+
+      <div class="tr-logo glass" id="comp-logo">
+        <img id="logoImg" class="logo-img hidden" src="" alt="">
+        <span class="logo-placeholder hidden" id="logoPlaceholder"><i class="fa-solid fa-shield-halved"></i></span>
+      </div>
+
+      <div class="glass tr-card job-card" id="comp-job">
+        <div class="tr-ico-wrap"><i class="fa-solid fa-briefcase"></i></div>
+        <div class="tr-meta">
+          <strong id="jobLabel">Civilian</strong>
+          <span id="jobGrade">Freelancer</span>
+        </div>
+      </div>
+
+      <div class="tr-money-group">
+        <div class="glass tr-card money-card cash-card" id="comp-cash">
+          <i class="fa-solid fa-money-bill-wave tr-ico cash-ico"></i>
+          <strong id="cash">$0</strong>
+        </div>
+        <div class="glass tr-card money-card bank-card" id="comp-bank">
+          <i class="fa-solid fa-building-columns tr-ico bank-ico"></i>
+          <strong id="bank">$0</strong>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="minimap-cluster">
+
+      <div class="street-pill glass" id="streetPill">
+        <div class="dir-badge" id="direction">N</div>
+        <div class="street-copy-wrap">
+          <div class="street-copy">
+            <strong id="street">Loading...</strong>
+            <span id="zone">San Andreas</span>
+          </div>
+        </div>
+        <div class="clock-waypoint-wrap">
+          <div class="clock-badge" id="clockBadge">
+            <i class="fa-regular fa-clock"></i>
+            <span id="clock">00:00</span>
+          </div>
+          <div class="clock-badge waypoint-chip hidden" id="waypointChip">
+            <i class="fa-solid fa-location-dot"></i>
+            <span id="waypointDist">-</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="minimap-frame" id="comp-minimap"></div>
+      <div class="minimap-border-ring"></div>
+
+      <div class="status-row" id="statusRow">
+
+        <div class="status-pill health" id="comp-health" title="Health">
+          <div class="pill-bg"></div>
+          <svg class="s-ring-svg" viewBox="0 0 44 44">
+            <circle class="s-ring-track" cx="22" cy="22" r="20"/>
+            <circle class="s-ring-fill"  cx="22" cy="22" r="20" id="healthBar"/>
+          </svg>
+          <div class="s-inner"><i class="fa-solid fa-heart s-ico"></i></div>
+        </div>
+
+        <div class="status-pill armor" id="comp-armor" title="Armour">
+          <div class="pill-bg"></div>
+          <svg class="s-ring-svg" viewBox="0 0 44 44">
+            <circle class="s-ring-track" cx="22" cy="22" r="20"/>
+            <circle class="s-ring-fill"  cx="22" cy="22" r="20" id="armorBar"/>
+          </svg>
+          <div class="s-inner"><i class="fa-solid fa-shield-halved s-ico"></i></div>
+        </div>
+
+        <div class="status-pill hunger" id="comp-hunger" title="Hunger">
+          <div class="pill-bg"></div>
+          <svg class="s-ring-svg" viewBox="0 0 44 44">
+            <circle class="s-ring-track" cx="22" cy="22" r="20"/>
+            <circle class="s-ring-fill"  cx="22" cy="22" r="20" id="hungerBar"/>
+          </svg>
+          <div class="s-inner"><i class="fa-solid fa-burger s-ico"></i></div>
+        </div>
+
+        <div class="status-pill thirst" id="comp-thirst" title="Thirst">
+          <div class="pill-bg"></div>
+          <svg class="s-ring-svg" viewBox="0 0 44 44">
+            <circle class="s-ring-track" cx="22" cy="22" r="20"/>
+            <circle class="s-ring-fill"  cx="22" cy="22" r="20" id="thirstBar"/>
+          </svg>
+          <div class="s-inner"><i class="fa-solid fa-droplet s-ico"></i></div>
+        </div>
+
+        <div class="status-pill stamina" id="staminaPill" title="Stamina">
+          <div class="pill-bg"></div>
+          <svg class="s-ring-svg" viewBox="0 0 44 44">
+            <circle class="s-ring-track" cx="22" cy="22" r="20"/>
+            <circle class="s-ring-fill"  cx="22" cy="22" r="20" id="staminaBar"/>
+          </svg>
+          <div class="s-inner"><i class="fa-solid fa-bolt s-ico"></i></div>
+        </div>
+
+        <div class="status-pill stress" id="stressPill" title="Stress">
+          <div class="pill-bg"></div>
+          <svg class="s-ring-svg" viewBox="0 0 44 44">
+            <circle class="s-ring-track" cx="22" cy="22" r="20"/>
+            <circle class="s-ring-fill"  cx="22" cy="22" r="20" id="stressBar"/>
+          </svg>
+          <div class="s-inner"><i class="fa-solid fa-brain s-ico"></i></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="lights-panel hidden" id="lightsPanel">
+      <div class="light-btn indicator-left"  id="lightIndicatorLeft"  title="Left Indicator"><i class="fa-solid fa-arrow-left"></i></div>
+      <div class="light-btn hazard"          id="lightHazard"         title="Hazards"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <div class="light-btn headlights"      id="lightHeadlights"     title="Headlights"><i class="fa-solid fa-lightbulb"></i></div>
+      <div class="light-btn highbeam"        id="lightHighbeam"       title="High Beam"><i class="fa-solid fa-bolt-lightning"></i></div>
+      <div class="light-btn indicator-right" id="lightIndicatorRight" title="Right Indicator"><i class="fa-solid fa-arrow-right"></i></div>
+    </div>
+
+    <div class="vehicle-card hidden" id="vehicleCard">
+      <div class="speed-wrap">
+        <svg viewBox="0 0 230 230" class="speed-svg" id="speedoSvg">
+          <circle class="dial-disc"                     cx="115" cy="115" r="112"/>
+          <g class="dial-ticks" id="dialTicks"></g>
+          <line class="redline-marker hidden" id="redlineMarker" x1="0" y1="0" x2="0" y2="0"/>
+          <circle class="side-arc-bg   fuel-arc-bg"    cx="115" cy="115" r="108"/>
+          <circle class="side-arc-fill fuel-arc-fill"  cx="115" cy="115" r="108" id="fuelArc"/>
+          <circle class="side-arc-bg   engine-arc-bg"  cx="115" cy="115" r="108"/>
+          <circle class="side-arc-fill engine-arc-fill" cx="115" cy="115" r="108" id="engineArc"/>
+          <circle class="speed-ring-bg"                 cx="115" cy="115" r="95"/>
+          <circle class="speed-ring-fill"               cx="115" cy="115" r="95" id="speedRing"/>
+        </svg>
+        <div class="speed-center">
+          <div class="speed-num-wrap">
+            <strong class="speed-val"  id="speedVal">0</strong>
+            <span   class="speed-unit" id="speedUnit">MPH</span>
+          </div>
+          <div class="gear-badge" id="gearVal">1</div>
+          <div class="veh-name-label" id="vehName"></div>
+        </div>
+        <div class="arc-labels">
+          <div class="arc-label fuel-label">
+            <i class="fa-solid fa-gas-pump"></i>
+            <span id="fuelPct">100%</span>
+          </div>
+          <div class="arc-label engine-label">
+            <i class="fa-solid fa-engine"></i>
+            <span id="enginePct">100%</span>
+          </div>
+        </div>
+        <div class="rpm-row">
+          <span class="rpm-lbl">RPM</span>
+          <span class="rpm-val" id="rpmVal">0</span>
+        </div>
+      </div>
+      <div class="veh-footer">
+        <div class="veh-tag" id="seatbeltPill">
+          <i class="fa-solid fa-user-shield"></i>
+          <span>Belt Off</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="hudMenu" class="hidden">
+    <div class="hud-menu-backdrop" id="menuBackdrop"></div>
+    <div class="hud-menu-panel">
+
+      <div class="hud-menu-title">
+        <h2><i class="fa-solid fa-sliders" style="margin-right:10px;color:var(--accent)"></i>HUD Settings</h2>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="hud-version-badge" id="versionBadge">v2.0.0</span>
+          <button class="hud-menu-close" id="menuClose"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+
+      <div class="hud-menu-section-label">Player Card</div>
+
+      <label class="hud-toggle-row">
+        <div class="hud-toggle-label"><i class="fa-solid fa-image-portrait"></i><div><span>Portrait</span><small>Avatar photo frame</small></div></div>
+        <label class="toggle-switch"><input type="checkbox" id="tog-portrait" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      </label>
+      <label class="hud-toggle-row">
+        <div class="hud-toggle-label"><i class="fa-solid fa-signature"></i><div><span>Character Name</span><small>First &amp; last name</small></div></div>
+        <label class="toggle-switch"><input type="checkbox" id="tog-charname" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      </label>
+      <label class="hud-toggle-row">
+        <div class="hud-toggle-label"><i class="fa-solid fa-microphone"></i><div><span>Voice Indicator</span><small>Talking dot &amp; mode</small></div></div>
+        <label class="toggle-switch"><input type="checkbox" id="tog-voice" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      </label>
+      <label class="hud-toggle-row">
+        <div class="hud-toggle-label"><i class="fa-solid fa-id-badge"></i><div><span>Player ID</span><small>Server ID number</small></div></div>
+        <label class="toggle-switch"><input type="checkbox" id="tog-playerid"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      </label>
+
+      <div class="hud-menu-section-label">Top Right Panel</div>
+
+      <label class="hud-toggle-row">
+        <div class="hud-toggle-label"><i class="fa-solid fa-shield-halved"></i><div><span>Server Logo</span><small>Logo above job card</small></div></div>
+        <label class="toggle-switch"><input type="checkbox" id="tog-logo" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      </label>
+      <label class="hud-toggle-row">
+        <div class="hud-toggle-label"><i class="fa-solid fa-briefcase"></i><div><span>Job &amp; Grade</span><small>Current occupation</small></div></div>
+        <label class="toggle-switch"><input type="checkbox" id="tog-job" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      </label>
+      <label class="hud-toggle-row">
+        <div class="hud-toggle-label"><i class="fa-solid fa-money-bill-wave"></i><div><span>Cash</span><small>Wallet balance</small></div></div>
+        <label class="toggle-switch"><input type="checkbox" id="tog-cash" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      </label>
+      <label class="hud-toggle-row">
+        <div class="hud-toggle-label"><i class="fa-solid fa-building-columns"></i><div><span>Bank</span><small>Account balance</small></div></div>
+        <label class="toggle-switch"><input type="checkbox" id="tog-bank" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      </label>
+
+      <div class="hud-menu-section-label">Minimap &amp; Status Rings</div>
+
+      <label class="hud-toggle-row">
+        <div class="hud-toggle-label"><i class="fa-solid fa-map"></i><div><span>Minimap</span><small>Frame, street &amp; clock</small></div></div>
+        <label class="toggle-switch"><input type="checkbox" id="tog-minimap" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      </label>
+      <label class="hud-toggle-row">
+        <div class="hud-toggle-label"><i class="fa-solid fa-heart"></i><div><span>Health Ring</span><small>HP indicator</small></div></div>
+        <label class="toggle-switch"><input type="checkbox" id="tog-health" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      </label>
+      <label class="hud-toggle-row">
+        <div class="hud-toggle-label"><i class="fa-solid fa-shield-halved"></i><div><span>Armour Ring</span><small>Armour indicator</small></div></div>
+        <label class="toggle-switch"><input type="checkbox" id="tog-armor" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      </label>
+      <label class="hud-toggle-row">
+        <div class="hud-toggle-label"><i class="fa-solid fa-burger"></i><div><span>Hunger Ring</span><small>Food level</small></div></div>
+        <label class="toggle-switch"><input type="checkbox" id="tog-hunger" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      </label>
+      <label class="hud-toggle-row">
+        <div class="hud-toggle-label"><i class="fa-solid fa-droplet"></i><div><span>Thirst Ring</span><small>Water level</small></div></div>
+        <label class="toggle-switch"><input type="checkbox" id="tog-thirst" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      </label>
+
+      <div class="hud-menu-section-label">Vehicle HUD</div>
+
+      <label class="hud-toggle-row">
+        <div class="hud-toggle-label"><i class="fa-solid fa-gauge-high"></i><div><span>Speedometer</span><small>Speed, gear, RPM, fuel</small></div></div>
+        <label class="toggle-switch"><input type="checkbox" id="tog-vehicle" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      </label>
+      <label class="hud-toggle-row">
+        <div class="hud-toggle-label"><i class="fa-solid fa-lightbulb"></i><div><span>Vehicle Lights</span><small>Indicators, headlights, hazards</small></div></div>
+        <label class="toggle-switch"><input type="checkbox" id="tog-lights" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      </label>
+      <label class="hud-toggle-row">
+        <div class="hud-toggle-label"><i class="fa-solid fa-tachometer-alt"></i><div><span>Speed Unit</span><small>Off = MPH &nbsp;·&nbsp; On = KMH</small></div></div>
+        <label class="toggle-switch"><input type="checkbox" id="tog-speedunit"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      </label>
+
+      <div class="hud-menu-section-label">Cinematic</div>
+
+      <label class="hud-toggle-row" style="grid-column:1/-1">
+        <div class="hud-toggle-label"><i class="fa-solid fa-film"></i><div><span>Cinematic Bars</span><small>Black bars top &amp; bottom</small></div></div>
+        <label class="toggle-switch"><input type="checkbox" id="tog-cinebars"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      </label>
+
+      <div class="hud-menu-section-label">Character Avatar</div>
+
+      <div class="avatar-input-row">
+        <div class="avatar-preview" id="avatarPreview">
+          <i class="fa-solid fa-user" id="avatarPreviewIcon"></i>
+          <img id="avatarPreviewImg" class="hidden" src="" alt="">
+        </div>
+        <div class="avatar-input-wrap">
+          <input type="url" id="avatarUrlInput" class="avatar-url-input" placeholder="Paste image URL..." autocomplete="off" spellcheck="false">
+          <div class="avatar-input-actions">
+            <button class="avatar-btn apply" id="avatarApply"><i class="fa-solid fa-check"></i> Apply</button>
+            <button class="avatar-btn clear"  id="avatarClear"><i class="fa-solid fa-xmark"></i> Clear</button>
+          </div>
+          <span class="avatar-hint">Supports imgur, Discord CDN, direct .png/.jpg links</span>
+        </div>
+      </div>
+
+      <div class="hud-menu-footer">
+        Press <kbd>ESC</kbd> or <kbd>BACKSPACE</kbd> to close &nbsp;·&nbsp; Changes save automatically
+      </div>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
