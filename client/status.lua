@@ -101,6 +101,11 @@ return function(State, Utils, Vehicle, Minimap, readyToRock, Config)
 
     CreateThread(function()
         while true do
+            local p = IsPauseMenuActive()
+            if p ~= State.gameIsPaused then
+                State.gameIsPaused = p
+                Utils.yeet('setPaused', { paused = p })
+            end
             if readyToRock() and not State.menuIsOpen and not State.gameIsPaused then
                 local t = NetworkIsPlayerTalking(cache.playerId)
                 if t ~= State.mouthRunning then State.mouthRunning = t end

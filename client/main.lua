@@ -24,11 +24,3 @@ local Minimap = lib.load('client/minimap')(State, Utils, readyToRock, Config)
 local Vehicle = lib.load('client/vehicle')(State, Utils, readyToRock, Config)
 local Status  = lib.load('client/status')(State, Utils, Vehicle, Minimap, readyToRock, Config)
 lib.load('client/events')(State, Utils, Minimap, Status, Vehicle, readyToRock, Config)
-
-if IsControlJustPressed(0,199) or IsControlJustPressed(0,200) then
-    local p = IsPauseMenuActive()
-    if p ~= State.gameIsPaused then
-        State.gameIsPaused = p
-        Utils.yeet('setPaused', { paused = p })
-    end
-end
