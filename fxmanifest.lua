@@ -4,8 +4,8 @@ lua54 'yes'
 
 name        'cx-hud'
 author      'Cxsper'
-description 'A shitty hud or something like that.'
-version     '4.3.0'
+description 'this is a hud i guess'
+version     '1.0.2'
 
 ui_page 'html/index.html'
 
@@ -30,5 +30,9 @@ client_scripts {
     'client/status.lua',
     'client/events.lua',
     'client/main.lua',
+}
+
+server_scripts {
+    'server/version.lua',
 }
 
