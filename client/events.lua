@@ -19,8 +19,11 @@ return function(State, Utils, Minimap, Status, Vehicle, readyToRock, Config)
 
     -- QBX / QB lifecycle
     RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-        Status.grabPlayerData(); State.diddlyLoaded = true
-        Wait(1500); Status.tryShowHud()
+        Status.grabPlayerData()
+        State.diddlyLoaded = true
+        State.actuallySpawned = true
+        Wait(1500)
+        Status.tryShowHud()
     end)
 
     RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
