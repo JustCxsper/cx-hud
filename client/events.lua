@@ -80,12 +80,6 @@ return function(State, Utils, Minimap, Status, Vehicle, readyToRock, Config)
         if State.hudShowing then Status.pushStatus(false) end
     end)
 
-    RegisterNetEvent('hud:client:UpdateStress', function(stress)
-        State.whoAmI.metadata        = State.whoAmI.metadata or {}
-        State.whoAmI.metadata.stress = stress
-        if State.hudShowing then Status.pushStatus(false) end
-    end)
-
     RegisterNetEvent('pma-voice:setTalkingMode', function(mode)
         local modes = { [1] = 'Whisper', [2] = 'Normal', [3] = 'Shout' }
         State.voiceLabel = modes[mode] or Config.DefaultVoice

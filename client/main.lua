@@ -41,3 +41,10 @@ AddStateBagChangeHandler('invOpen', nil, function(bagName, key, value)
         end
     end
 end)
+-- Slapped in here to hide the default GTA Reticle - Will make togglable in the futre
+CreateThread(function()
+    while true do
+        Wait(0)
+        HideHudComponentThisFrame(14)
+    end
+end)

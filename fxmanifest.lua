@@ -5,7 +5,7 @@ lua54 'yes'
 name        'cx-hud'
 author      'Cxsper'
 description 'this is a hud i guess'
-version     '1.0.2'
+version     '1.0.5'
 
 ui_page 'html/index.html'
 
@@ -34,5 +34,9 @@ client_scripts {
 
 server_scripts {
     'server/version.lua',
+}
+
+dependencies {
+    'jg-stress-addon',
 }
 

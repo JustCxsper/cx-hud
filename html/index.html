@@ -30,11 +30,6 @@
           <div class="tl-name-row" id="comp-charname">
             <strong class="tl-charname" id="charName">Player</strong>
           </div>
-          <div class="tl-row" id="comp-voice">
-            <span class="voice-dot" id="voiceDot"></span>
-            <span class="tl-label">Voice</span>
-            <strong class="tl-val" id="voiceMode">Normal</strong>
-          </div>
           <div class="tl-row hidden" id="comp-playerid">
             <span class="tl-label">ID</span>
             <strong class="tl-val" id="playerId" style="color:var(--accent);font-size:13px;">1</strong>
@@ -97,6 +92,15 @@
       <div class="minimap-border-ring"></div>
 
       <div class="status-row" id="statusRow">
+        
+        <div class="status-pill voice" id="comp-voice" title="Voice">
+          <div class="pill-bg"></div>
+          <svg class="s-ring-svg" viewBox="0 0 44 44">
+            <circle class="s-ring-track" cx="22" cy="22" r="20"/>
+            <circle class="s-ring-fill"  cx="22" cy="22" r="20" id="voiceRingBar"/>
+          </svg>
+          <div class="s-inner"><i class="fa-solid fa-microphone s-ico"></i></div>
+        </div>
 
         <div class="status-pill health" id="comp-health" title="Health">
           <div class="pill-bg"></div>
@@ -154,6 +158,8 @@
 
       </div>
     </div>
+
+
 
     <div class="lights-panel hidden" id="lightsPanel">
       <div class="light-btn indicator-left"  id="lightIndicatorLeft"  title="Left Indicator"><i class="fa-solid fa-arrow-left"></i></div>

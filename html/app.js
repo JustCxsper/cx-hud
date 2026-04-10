@@ -3,7 +3,6 @@ const carCard       = document.getElementById('vehicleCard')
 const lightyBois    = document.getElementById('lightsPanel')
 const stressBubble  = document.getElementById('stressPill')
 const staminaBubble = document.getElementById('staminaPill')
-const talkDot       = document.getElementById('voiceDot')
 const goFastRing    = document.getElementById('speedRing')
 const settingsMenu  = document.getElementById('hudMenu')
 const petrolArc     = document.getElementById('fuelArc')
@@ -17,8 +16,8 @@ const cineTop       = document.getElementById('cinebarTop')
 const cineBottom    = document.getElementById('cinebarBottom')
 const gearBadge     = document.getElementById('gearVal')
 const redlineMarker = document.getElementById('redlineMarker')
+const voiceRingContainer = document.getElementById('comp-voice')
 
-const elVoiceMode  = document.getElementById('voiceMode')
 const elPlayerId   = document.getElementById('playerId')
 const elJobLabel   = document.getElementById('jobLabel')
 const elJobGrade   = document.getElementById('jobGrade')
@@ -52,6 +51,7 @@ const elLightRight = document.getElementById('lightIndicatorRight')
 const elLightHaz   = document.getElementById('lightHazard')
 const elLightHead  = document.getElementById('lightHeadlights')
 const elLightHigh  = document.getElementById('lightHighbeam')
+
 
 const SAVE_KEY   = 'cx_hud_state_v1'
 const SPEED_KEY  = 'cx_hud_speed_v1'
@@ -470,7 +470,12 @@ const handlers = {
     },
 
     updateStatus(data) {
-        if (data.voice     !== undefined) elVoiceMode.textContent = data.voice
+        if (data.voice !== undefined) {
+            if (voiceRingContainer) {
+                voiceRingContainer.classList.remove('mode-Whisper', 'mode-Normal', 'mode-Shout');
+                voiceRingContainer.classList.add('mode-' + data.voice);
+            }
+        }
         if (data.id        !== undefined) elPlayerId.textContent  = data.id
         if (data.job       !== undefined) elJobLabel.textContent  = data.job
         if (data.grade     !== undefined) elJobGrade.textContent  = data.grade
@@ -496,7 +501,10 @@ const handlers = {
         if (data.stress  !== undefined) setRing(elStressBar,  data.stress)
         if (data.stamina !== undefined) setRing(elStaminaBar, 100 - (data.stamina || 0))
 
-        if (data.talking     !== undefined) talkDot.classList.toggle('talking',       !!data.talking)
+        if (data.talking !== undefined) {
+            if (voiceRingContainer) voiceRingContainer.classList.toggle('talking', !!data.talking);
+        }
+
         if (data.showStress  !== undefined) stressBubble.classList.toggle('visible',  !!data.showStress)
         if (data.showStamina !== undefined) staminaBubble.classList.toggle('visible', !!data.showStamina)
 

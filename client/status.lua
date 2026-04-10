@@ -51,7 +51,7 @@ return function(State, Utils, Vehicle, Minimap, readyToRock, Config)
         local meta    = State.whoAmI.metadata or {}
         local hunger  = Utils.roundIt(meta.hunger or 100)
         local thirst  = Utils.roundIt(meta.thirst or 100)
-        local stress  = Utils.roundIt(meta.stress  or 0)
+        local stress  = Utils.roundIt(LocalPlayer.state.stress or meta.stress or 0)
         local stamina = math.max(0, math.min(100, GetPlayerSprintStaminaRemaining(cache.playerId)))
 
         local status = {
