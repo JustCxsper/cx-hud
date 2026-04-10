@@ -76,4 +76,5 @@ Config.DefaultVisible = {
     lights    = true,
     cinebars  = false,
     logo      = false,
+    crosshair = false,
 }
