@@ -857,13 +857,6 @@ body {
 
 .avatar-hint { font-size: 9px; color: var(--muted); line-height: 1.4; }
 
-@media (min-width: 2560px) {
-  .top-left        { transform: scale(1.18); transform-origin: top left; }
-  .top-right       { transform: scale(1.18); transform-origin: top right; }
-  .minimap-cluster { transform: scale(1.16); transform-origin: bottom left; }
-  .vehicle-card    { transform: scale(1.14); transform-origin: bottom right; }
-}
-
 #hudMenu {
   position: absolute;
   inset: 0;

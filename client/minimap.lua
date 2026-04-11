@@ -73,17 +73,28 @@ return function(State, Utils, readyToRock, Config)
         SetBigmapActive(true, false); Wait(0); SetBigmapActive(false, false)
         killBigmap()
         mapPatched = true
+        Utils.yeet('setMinimapGeo', calculateMinimapGeo())
     end
 
     local lastSafezone = GetSafeZoneSize()
+    local lastResX, lastResY = GetActiveScreenResolution()
     CreateThread(function()
         while true do
             Wait(2000)
             local current = GetSafeZoneSize()
+            local curResX, curResY = GetActiveScreenResolution()
+
             if math.abs(current - lastSafezone) > 0.001 then
                 lastSafezone = current
                 mapPatched   = false
-                Utils.yeet('setMinimapGeo', calculateMinimapGeo())
+            end
+
+            if curResX ~= lastResX or curResY ~= lastResY then
+                lastResX, lastResY = curResX, curResY
+                mapPatched = false
+            end
+            if not mapPatched then
+                patchMinimap()
             end
         end
     end)
