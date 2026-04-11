@@ -11,6 +11,8 @@ A modern, highly customizable, and lightweight HUD for **Qbox** and **QBCore** F
 
 * **Dynamic Minimap:** Clean square minimap with street names, compass direction, current time, and live waypoint distance tracking.
 
+* **Responsive:** Supports up to 4K resolution.
+  
 ## Dependencies
 
 To get the most out of `cx-hud`, ensure you have the following resources installed and running:
