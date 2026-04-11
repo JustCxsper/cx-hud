@@ -12,6 +12,14 @@ A modern, highly customizable, and lightweight HUD for **Qbox** and **QBCore** F
 * **Dynamic Minimap:** Clean square minimap with street names, compass direction, current time, and live waypoint distance tracking.
 
 * **Responsive:** Supports up to 4K resolution.
+
+## Features Coming Soon
+
+* **In-Game UI Editor**
+
+* * **Oxygen Status**
+ 
+* * **Helicopter / Boats UI**
   
 ## Dependencies
 
