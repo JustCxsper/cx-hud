@@ -17,9 +17,9 @@ A modern, highly customizable, and lightweight HUD for **Qbox** and **QBCore** F
 
 * **In-Game UI Editor**
 
-* * **Oxygen Status**
+* **Oxygen Status**
  
-* * **Helicopter / Boats UI**
+* **Helicopter / Boats UI**
   
 ## Dependencies
 
