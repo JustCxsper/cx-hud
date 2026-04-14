@@ -1,15 +1,16 @@
 local hudHidden = false
 local State = {
-    whoAmI        = {},
-    hudShowing    = false,
-    diddlyLoaded  = false,
+    whoAmI          = {},
+    hudShowing      = false,
+    diddlyLoaded    = false,
     actuallySpawned = false,
-    mouthRunning  = false,
-    voiceLabel    = Config.DefaultVoice,
-    buckledUp     = false,
-    menuIsOpen    = false,
-    gameIsPaused  = false,
-    lastLights    = {
+    mouthRunning    = false,
+    voiceLabel      = Config.DefaultVoice,
+    buckledUp       = false,
+    ejected         = false,
+    menuIsOpen      = false,
+    gameIsPaused    = false,
+    lastLights      = {
         headlights = false, highbeam = false,
         indicatorLeft = false, indicatorRight = false, hazard = false,
     },
@@ -21,22 +22,18 @@ end
 
 local Utils   = lib.load('client/utils')(Config)
 local Minimap = lib.load('client/minimap')(State, Utils, readyToRock, Config)
-local Vehicle = lib.load('client/vehicle')(State, Utils, readyToRock, Config)
+local Vehicle = lib.load('client/vehicle')(State, Utils, Config)
 local Status  = lib.load('client/status')(State, Utils, Vehicle, Minimap, readyToRock, Config)
+lib.load('client/seatbelt')(State, Utils, Config)
+lib.load('client/lights')(State, Utils, readyToRock)
+lib.load('client/nui')(State, Utils, Minimap, Status, Vehicle, Config)
 lib.load('client/events')(State, Utils, Minimap, Status, Vehicle, readyToRock, Config)
 
 AddStateBagChangeHandler('invOpen', nil, function(bagName, key, value)
     if not bagName:find('player:') then return end
-
     if value then
-        if not hudHidden then
-            SendNUIMessage({ action = 'hideHud' })
-            hudHidden = true
-        end
+        if not hudHidden then SendNUIMessage({ action = 'hideHud' }); hudHidden = true end
     else
-        if hudHidden then
-            SendNUIMessage({ action = 'showHud' })
-            hudHidden = false
-        end
+        if hudHidden then SendNUIMessage({ action = 'showHud' }); hudHidden = false end
     end
 end)

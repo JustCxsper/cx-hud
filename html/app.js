@@ -16,6 +16,7 @@ const cineTop       = document.getElementById('cinebarTop')
 const cineBottom    = document.getElementById('cinebarBottom')
 const gearBadge     = document.getElementById('gearVal')
 const redlineMarker = document.getElementById('redlineMarker')
+
 const voiceRingContainer = document.getElementById('comp-voice')
 
 const elPlayerId   = document.getElementById('playerId')
@@ -52,7 +53,6 @@ const elLightHaz   = document.getElementById('lightHazard')
 const elLightHead  = document.getElementById('lightHeadlights')
 const elLightHigh  = document.getElementById('lightHighbeam')
 
-
 const SAVE_KEY   = 'cx_hud_state_v1'
 const SPEED_KEY  = 'cx_hud_speed_v1'
 const AVATAR_KEY = 'cx_hud_avatar_v1'
@@ -64,25 +64,52 @@ const RES_NAME = typeof window.GetParentResourceName === 'function'
 const hudState = {
     portrait: true, charname: true, voice: true, playerid: false,
     logo: true, job: true, cash: true, bank: true,
-    minimap: true, health: true, armor: true, hunger: true, thirst: true,
+    minimap: true, streetclock: true, health: true, armor: true, hunger: true, thirst: true,
     vehicle: true, lights: true, cinebars: false,
 }
 
-let currentUnit    = null
-let redlineRpm     = 85
-let hadWaypoint    = false
-let lastGear       = -1
-let gearFlashTimer = null
+let currentUnit = null
+let hadWaypoint = false
+
+function nuiPost(endpoint, body) {
+    fetch('https://' + RES_NAME + '/' + endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body || {}),
+    }).catch(() => {})
+}
 
 function applyMinimapGeo(geo) {
     if (!geo) return
     const root = document.documentElement.style
-    if (geo.left   != null) root.setProperty('--mm-left', geo.left + 'px')
-    if (geo.top    != null) root.setProperty('--mm-top',  geo.top  + 'px')
+    if (geo.left   != null) root.setProperty('--mm-left', geo.left   + 'px')
+    if (geo.top    != null) root.setProperty('--mm-top',  geo.top    + 'px')
     if (geo.width  != null) root.setProperty('--mm-w',    geo.width  + 'px')
     if (geo.height != null) root.setProperty('--mm-h',    geo.height + 'px')
     if (geo.insetX != null) root.setProperty('--sz-inset-x', geo.insetX + 'px')
     if (geo.insetY != null) root.setProperty('--sz-inset-y', geo.insetY + 'px')
+
+    const pill = document.getElementById('streetPill')
+    const statusRow = document.getElementById('statusRow')
+    const saved = (() => { try { return JSON.parse(localStorage.getItem('cx_hud_layout_v1') || '{}') } catch (_) { return {} } })()
+
+    const editorOpen = typeof edIsOpen !== 'undefined' && edIsOpen()
+    if (!editorOpen) {
+        if (pill && !saved.streetPill) {
+            pill.style.left = ''
+            pill.style.top  = ''
+        }
+        if (statusRow && !saved.statusRow) {
+            statusRow.style.left = ''
+            statusRow.style.top  = ''
+        }
+    }
+    if (typeof edForceRingRepaint === 'function') edForceRingRepaint()
+
+    if (typeof edIsOpen !== 'undefined' && edIsOpen() && typeof edHandles !== 'undefined') {
+        const mmHandle = edHandles.find(h => h.block.isMinimap)
+        if (mmHandle) setTimeout(() => edSyncHandle(mmHandle), 0)
+    }
 }
 
 function injectColors(cols) {
@@ -140,30 +167,53 @@ function applyVisibility() {
         if (el) el.classList.toggle('hidden', !hudState[key])
     }
     const tlCard = document.querySelector('.tl-card')
-        if (tlCard) {
-            const showTlCard = hudState.portrait || hudState.charname || hudState.playerid
-            tlCard.classList.toggle('hidden', !showTlCard)
-        }
-
+    if (tlCard) {
+        const showTlCard = hudState.portrait || hudState.charname || hudState.playerid
+        tlCard.classList.toggle('hidden', !showTlCard)
+    }
     if (whereAmI) whereAmI.classList.toggle('hidden', !hudState.minimap)
-    if (wpWrap)   wpWrap.classList.toggle('hidden',   !hudState.minimap)
-
+    if (wpWrap) wpWrap.classList.toggle('hidden', !hudState.streetclock)
+    if (clockChip) clockChip.classList.toggle('hidden', !hudState.streetclock)
     if (elStatusRow) {
         elStatusRow.classList.toggle('hidden', !(hudState.health || hudState.armor || hudState.hunger || hudState.thirst))
     }
-
     carCard.classList.toggle('hidden', !hudState.vehicle)
-
     cineTop.classList.toggle('hidden',    !hudState.cinebars)
     cineBottom.classList.toggle('hidden', !hudState.cinebars)
+    const borderRing = document.querySelector('.minimap-border-ring')
+    if (borderRing) borderRing.classList.toggle('hidden', !hudState.minimap)
+}
+
+function applyLockedOptions() {
+    const opts = window.__menuOptions || {}
+
+    let locked = []
+    if (Array.isArray(opts.locked)) {
+        locked = opts.locked
+    } else {
+        for (const [key, allowed] of Object.entries(opts)) {
+            if (allowed === false) locked.push(key)
+        }
+    }
+
+    for (const key of locked) {
+        const row = document.querySelector(`label[for="tog-${key}"]`) || document.getElementById('tog-' + key)?.closest('.hud-toggle-row')
+        if (row) {
+            row.style.opacity = '0.45'
+            row.style.pointerEvents = 'none'
+        }
+        const cb = document.getElementById('tog-' + key)
+        if (cb) cb.disabled = true
+    }
 }
 
 function bootHudState() {
     loadHudState()
     applyVisibility()
+    applyLockedOptions()
 }
 
-const RING_CIRC     = 2 * Math.PI * 20
+const RING_CIRC     = 125.66
 const RING_CIRC_STR = RING_CIRC + ' ' + RING_CIRC
 
 function initRings() {
@@ -178,57 +228,10 @@ function setRing(el, value) {
     el.style.strokeDashoffset = RING_CIRC - (pct / 100) * RING_CIRC
 }
 
-function setTxt(id, value) {
-    const el = document.getElementById(id)
-    if (el) el.textContent = value
-}
-
-function setSideArc(arcEl, pctLabelEl, value) {
-    if (!arcEl) return
-    const pct = Math.max(0, Math.min(100, value || 0))
-    arcEl.style.strokeDashoffset = 110 - (pct / 100) * 110
-    if (pctLabelEl) pctLabelEl.textContent = Math.round(pct) + '%'
-}
-
-function updateSpeedRing(spd) {
-    const pct = Math.max(0, Math.min(100, (spd || 0) / 220 * 100))
-    goFastRing.style.strokeDashoffset = 418 - (pct / 100) * 418
-}
-
-function rpmDisplay(pct) {
-    return Math.round((Math.max(0, Math.min(100, pct || 0)) / 100) * 8000).toLocaleString()
-}
-
 function setWarn(pillEl, barEl, value, threshold) {
     const low = value <= threshold
     if (pillEl) pillEl.classList.toggle('warn-low', low)
     if (barEl)  barEl.classList.toggle('warn-low',  low)
-}
-
-function setArcWarn(el, value, threshold) {
-    if (el) el.classList.toggle('warn-low', value <= threshold)
-}
-
-function refreshLights(data) {
-    if (!data) return
-    const hz = !!data.hazard
-    flipLight(elLightLeft,  hz || !!data.indicatorLeft)
-    flipLight(elLightRight, hz || !!data.indicatorRight)
-    flipLight(elLightHaz,   hz)
-    flipLight(elLightHead,  !!data.headlights)
-    flipLight(elLightHigh,  !!data.highbeam)
-}
-
-function flipLight(el, on) {
-    if (el) el.classList.toggle('active', on)
-}
-
-function nuiPost(endpoint, body) {
-    fetch('https://' + RES_NAME + '/' + endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body || {}),
-    }).catch(() => {})
 }
 
 function updateWaypointChip(distStr) {
@@ -249,194 +252,24 @@ function updateWaypointChip(distStr) {
     }
 }
 
-function buildRedlineMarker(threshold) {
-    if (!redlineMarker) return
-    const cx = 115, cy = 115, r = 88
-    const sweep = 264
-    const angleDeg = (threshold / 100) * sweep
-    const rad = (angleDeg * Math.PI) / 180
-    const ox = cx + r * Math.cos(rad)
-    const oy = cy + r * Math.sin(rad)
-    const innerR = 78
-    const ix = cx + innerR * Math.cos(rad)
-    const iy = cy + innerR * Math.sin(rad)
-    redlineMarker.setAttribute('x1', ox.toFixed(2))
-    redlineMarker.setAttribute('y1', oy.toFixed(2))
-    redlineMarker.setAttribute('x2', ix.toFixed(2))
-    redlineMarker.setAttribute('y2', iy.toFixed(2))
-    redlineMarker.classList.remove('hidden')
-}
-
-function handleGearChange(newGear, rpmPct) {
-    if (newGear === lastGear) return
-    lastGear = newGear
-    if (newGear === 'R' || newGear === '0') return
-    if (gearFlashTimer) clearTimeout(gearFlashTimer)
-    gearBadge.classList.add('gear-shift')
-    gearFlashTimer = setTimeout(() => {
-        gearBadge.classList.remove('gear-shift')
-        gearFlashTimer = null
-    }, 280)
-}
-
-function applyRedlineFlash(rpmPct) {
-    const isRed = rpmPct >= redlineRpm
-    goFastRing.classList.toggle('redline-active', isRed)
-}
-
-function buildDialTicks() {
-    const tickGroup = document.getElementById('dialTicks')
-    if (!tickGroup) return
-    const cx = 115, cy = 115, outerR = 88, majorLen = 10, minorLen = 5
-    const startAngle = 0, sweep = 264, majorCount = 11, minorPerMajor = 4
-    const total = (majorCount - 1) * (minorPerMajor + 1) + 1
-    const step  = sweep / (total - 1)
-    const NS    = 'http://www.w3.org/2000/svg'
-    const frag  = document.createDocumentFragment()
-    for (let i = 0; i < total; i++) {
-        const major   = i % (minorPerMajor + 1) === 0
-        const len     = major ? majorLen : minorLen
-        const rad     = ((startAngle + i * step) * Math.PI) / 180
-        const ox = cx + outerR * Math.cos(rad)
-        const oy = cy + outerR * Math.sin(rad)
-        const ix = cx + (outerR - len) * Math.cos(rad)
-        const iy = cy + (outerR - len) * Math.sin(rad)
-        const line = document.createElementNS(NS, 'line')
-        line.setAttribute('x1', ox.toFixed(2))
-        line.setAttribute('y1', oy.toFixed(2))
-        line.setAttribute('x2', ix.toFixed(2))
-        line.setAttribute('y2', iy.toFixed(2))
-        line.setAttribute('class', major ? 'dial-tick-major' : 'dial-tick-minor')
-        frag.appendChild(line)
-    }
-    tickGroup.appendChild(frag)
-}
-
-buildDialTicks()
-initRings()
-
 function applyLogo(logoConfig) {
     if (!logoConfig) return
     const img         = document.getElementById('logoImg')
     const placeholder = document.getElementById('logoPlaceholder')
     const slot        = document.getElementById('comp-logo')
     if (!img || !placeholder || !slot) return
-
-    if (!logoConfig.url || logoConfig.url === '') {
-        slot.classList.add('hidden')
-        return
+    if (logoConfig.transparentBg) {
+        slot.classList.remove('glass')
+    } else {
+        slot.classList.add('glass')
     }
-
+    if (!logoConfig.url || logoConfig.url === '') { slot.classList.add('hidden'); return }
     if (logoConfig.width)  slot.style.setProperty('--logo-w', logoConfig.width  + 'px')
     if (logoConfig.height) slot.style.setProperty('--logo-h', logoConfig.height + 'px')
-
     img.src = logoConfig.url
     img.classList.remove('hidden')
     placeholder.classList.add('hidden')
-    img.onerror = () => {
-        img.classList.add('hidden')
-        placeholder.classList.remove('hidden')
-    }
-}
-
-const bigPortrait    = document.getElementById('portraitImg')
-const bigFallback    = document.getElementById('portraitIcon')
-const previewPic     = document.getElementById('avatarPreviewImg')
-const previewFallbck = document.getElementById('avatarPreviewIcon')
-const urlBox         = document.getElementById('avatarUrlInput')
-
-if (bigPortrait) bigPortrait.addEventListener('error', nukeAvatar)
-
-function setAvatar(url) {
-    if (!url || !url.trim()) { nukeAvatar(); return }
-    const src = url.trim()
-    bigPortrait.src = src
-    bigPortrait.classList.remove('hidden')
-    bigFallback.classList.add('hidden')
-    previewPic.src = src
-    previewPic.classList.remove('hidden')
-    previewFallbck.classList.add('hidden')
-    localStorage.setItem(AVATAR_KEY, src)
-}
-
-function nukeAvatar() {
-    bigPortrait.src = ''
-    bigPortrait.classList.add('hidden')
-    bigFallback.classList.remove('hidden')
-    previewPic.src = ''
-    previewPic.classList.add('hidden')
-    previewFallbck.classList.remove('hidden')
-    if (urlBox) urlBox.value = ''
-    localStorage.removeItem(AVATAR_KEY)
-}
-
-;(function() {
-    const saved = localStorage.getItem(AVATAR_KEY)
-    if (saved) setAvatar(saved)
-})()
-
-document.getElementById('avatarApply')?.addEventListener('click', () => setAvatar(urlBox.value))
-document.getElementById('avatarClear')?.addEventListener('click', nukeAvatar)
-urlBox?.addEventListener('keydown', e => { if (e.key === 'Enter') setAvatar(urlBox.value) })
-urlBox?.addEventListener('input', () => {
-    const val = urlBox.value.trim()
-    if (val.length > 8) {
-        previewPic.src = val
-        previewPic.classList.remove('hidden')
-        previewFallbck.classList.add('hidden')
-    }
-})
-
-function openSettings() {
-    settingsMenu.classList.remove('hidden')
-    for (const key of Object.keys(hudState)) {
-        const cb = document.getElementById('tog-' + key)
-        if (cb) cb.checked = hudState[key]
-    }
-    const speedTog = document.getElementById('tog-speedunit')
-    if (speedTog) speedTog.checked = (currentUnit === 'KMH')
-    const savedAv = localStorage.getItem(AVATAR_KEY)
-    if (savedAv && urlBox) urlBox.value = savedAv
-}
-
-function closeSettings() {
-    settingsMenu.classList.add('hidden')
-    nuiPost('menuClosed')
-}
-
-document.getElementById('menuClose')?.addEventListener('click', closeSettings)
-document.getElementById('menuBackdrop')?.addEventListener('click', closeSettings)
-
-document.addEventListener('keydown', e => {
-    if (settingsMenu.classList.contains('hidden')) return
-    if ((e.key === 'Escape' || e.key === 'Backspace') && document.activeElement !== urlBox) {
-        e.preventDefault()
-        closeSettings()
-    }
-})
-
-for (const key of Object.keys(hudState)) {
-    const cb = document.getElementById('tog-' + key)
-    if (!cb) continue
-    cb.addEventListener('change', () => {
-        hudState[key] = cb.checked
-        applyVisibility()
-        saveHudState()
-    })
-}
-
-currentUnit = loadSpeedUnit() || 'MPH'
-
-;(function() { nuiPost('setSpeedUnit', { unit: currentUnit }) })()
-
-const unitToggle = document.getElementById('tog-speedunit')
-if (unitToggle) {
-    unitToggle.checked = (currentUnit === 'KMH')
-    unitToggle.addEventListener('change', () => {
-        currentUnit = unitToggle.checked ? 'KMH' : 'MPH'
-        saveSpeedUnit(currentUnit)
-        nuiPost('setSpeedUnit', { unit: currentUnit })
-    })
+    img.onerror = () => { img.classList.add('hidden'); placeholder.classList.remove('hidden') }
 }
 
 const handlers = {
@@ -446,8 +279,10 @@ const handlers = {
         if (data?.thresholds) window.__cxThresh = data.thresholds
         if (data?.redline)    { redlineRpm = data.redline; buildRedlineMarker(redlineRpm) }
         if (data?.logo)       applyLogo(data.logo)
+        if (data?.menuOptions) window.__menuOptions = data.menuOptions
         applyMinimapGeo(data?.minimapGeo)
         bootHudState()
+        if (typeof edApplyOnBoot === 'function') edApplyOnBoot()
     },
 
     setMinimapGeo(data) {
@@ -477,8 +312,8 @@ const handlers = {
     updateStatus(data) {
         if (data.voice !== undefined) {
             if (voiceRingContainer) {
-                voiceRingContainer.classList.remove('mode-Whisper', 'mode-Normal', 'mode-Shout');
-                voiceRingContainer.classList.add('mode-' + data.voice);
+                voiceRingContainer.classList.remove('mode-Whisper', 'mode-Normal', 'mode-Shout')
+                voiceRingContainer.classList.add('mode-' + data.voice)
             }
         }
         if (data.id        !== undefined) elPlayerId.textContent  = data.id
@@ -507,7 +342,7 @@ const handlers = {
         if (data.stamina !== undefined) setRing(elStaminaBar, 100 - (data.stamina || 0))
 
         if (data.talking !== undefined) {
-            if (voiceRingContainer) voiceRingContainer.classList.toggle('talking', !!data.talking);
+            if (voiceRingContainer) voiceRingContainer.classList.toggle('talking', !!data.talking)
         }
 
         if (data.showStress  !== undefined) stressBubble.classList.toggle('visible',  !!data.showStress)
@@ -527,10 +362,8 @@ const handlers = {
             lightyBois.classList.add('hidden')
             return
         }
-
         carCard.classList.toggle('hidden', !data.show)
         lightyBois.classList.toggle('hidden', !(hudState.lights && data.show))
-
         if (!data.show) return
 
         elSpeedVal.textContent  = data.speed
@@ -542,8 +375,7 @@ const handlers = {
         updateSpeedRing(data.speed)
         setSideArc(petrolArc, elFuelPct,   data.fuel)
         setSideArc(motorArc,  elEnginePct, data.engine)
-
-        handleGearChange(data.gear, data.rpm)
+        handleGearChange(data.gear)
         applyRedlineFlash(data.rpm)
 
         if (elSeatbelt) {
@@ -567,17 +399,9 @@ const handlers = {
 window.addEventListener('message', ev => {
     const { action, data } = ev.data ?? {}
     handlers[action]?.(data)
+    if (action === 'hideHud') theWholeHud.classList.add('inventory-hidden')
+    if (action === 'showHud') theWholeHud.classList.remove('inventory-hidden')
 })
 
-window.addEventListener('message', (event) => {
-    const data = event.data;
-    if (data.action === 'hideHud') {
-        theWholeHud.classList.add('inventory-hidden');
-    }
-
-    if (data.action === 'showHud') {
-        theWholeHud.classList.remove('inventory-hidden');
-    }
-});
-
+initRings()
 bootHudState()

@@ -8,16 +8,24 @@ return function(Config)
     end
 
     local function headingToCompass(deg)
-        local dirs = { 'N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW' }
-        return dirs[math.floor(((deg % 360) + 22.5) / 45) % 8 + 1]
+        local norm = deg % 360
+        if norm < 22.5 or norm >= 337.5 then return 'N'
+        elseif norm < 67.5  then return 'NE'
+        elseif norm < 112.5 then return 'E'
+        elseif norm < 157.5 then return 'SE'
+        elseif norm < 202.5 then return 'S'
+        elseif norm < 247.5 then return 'SW'
+        elseif norm < 292.5 then return 'W'
+        else                     return 'NW'
+        end
     end
 
     local function prettyMoney(n)
-        local s      = tostring(math.floor(n or 0))
-        local going  = true
-        while going do
-            local k; s, k = s:gsub('^(%-?%d+)(%d%d%d)', '%1,%2')
-            if k == 0 then going = false end
+        local s = tostring(math.floor(n or 0))
+        while true do
+            local result, count = s:gsub('^(%-?%d+)(%d%d%d)', '%1,%2')
+            if count == 0 then break end
+            s = result
         end
         return '$' .. s
     end
@@ -35,7 +43,9 @@ return function(Config)
         local wp = GetFirstBlipInfoId(8)
         if not DoesBlipExist(wp) then return nil end
         local wc = GetBlipInfoIdCoord(wp)
-        local d  = math.sqrt((coords.x - wc.x)^2 + (coords.y - wc.y)^2)
+        local dx = coords.x - wc.x
+        local dy = coords.y - wc.y
+        local d  = math.sqrt(dx * dx + dy * dy)
         return d >= 1000 and ('%.1f km'):format(d / 1000) or ('%d m'):format(math.floor(d))
     end
 

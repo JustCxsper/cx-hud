@@ -1,15 +1,4 @@
 return function(State, Utils, Minimap, Status, Vehicle, readyToRock, Config)
-    -- NUI callbacks
-    RegisterNuiCallback('menuClosed', function(_, cb)
-        State.menuIsOpen = false; SetNuiFocus(false, false); cb('ok')
-    end)
-
-    RegisterNuiCallback('setSpeedUnit', function(data, cb)
-        if data.unit == 'KMH' or data.unit == 'MPH' then Config.SpeedUnit = data.unit end
-        cb('ok')
-    end)
-
-    -- HUD menu command
     RegisterCommand(Config.MenuCommand or 'hud', function()
         if not readyToRock() then return end
         State.menuIsOpen = true
@@ -17,7 +6,6 @@ return function(State, Utils, Minimap, Status, Vehicle, readyToRock, Config)
         Utils.yeet('openMenu', {})
     end, false)
 
-    -- QBX / QB lifecycle
     RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
         Status.grabPlayerData()
         State.diddlyLoaded = true

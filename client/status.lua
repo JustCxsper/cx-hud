@@ -123,10 +123,10 @@ return function(State, Utils, Vehicle, Minimap, readyToRock, Config)
         Utils.yeet('initConfig', {
             colors     = Config.Colors,
             defaults   = Config.DefaultVisible,
-            speedUnit  = Config.SpeedUnit,
             logo       = Config.Logo,
             redline    = Config.RedlineThreshold,
             minimapGeo = Minimap.calculateMinimapGeo(),
+            menuOptions = Config.MenuOptions,
             thresholds = {
                 health = Config.WarnHealth, hunger = Config.WarnHunger,
                 thirst = Config.WarnThirst, fuel   = Config.WarnFuel,

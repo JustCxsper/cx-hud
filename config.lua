@@ -1,21 +1,13 @@
 Config = {}
-Config.Version = "1.0.6" --Don't change this, it is used for version checking and update notifications.
+Config.Version = "1.1.0" --Don't change this, it is used for version checking and update notifications.
 
 Config.DefaultVoice        = 'Normal'
 Config.ShowStress          = true
 Config.StressThreshold     = 5
-Config.SpeedUnit           = 'MPH' --freedom units
-Config.EnableMinimapOnFoot = true
 Config.UpdateInterval      = 100
 Config.MenuCommand         = 'hud'
 
---logo stuff needs changed a bit, but this is just a placeholder for now
-Config.Logo = {
-    url    = 'https://cdn.discordapp.com/attachments/1474555836201173036/1488304999082754078/11111.png?ex=69cc4b8b&is=69cafa0b&hm=6ff725c9e4fa61b87241e6d02fbea1a799a31345b5ae5aa2073376da9c593e3c&',
-    width  = 120,
-    height = 80,
-}
-
+--redline threshold
 Config.RedlineThreshold = 85
 
 --seatbelt shite
@@ -31,6 +23,56 @@ Config.WarnHunger  = 15
 Config.WarnThirst  = 15
 Config.WarnFuel    = 10
 Config.WarnEngine  = 20
+
+Config.Logo = {
+    url            = 'https://cdn.discordapp.com/attachments/1492598634821452121/1493684431263764691/cxsperdev-logo.png?ex=69dfdd87&is=69de8c07&hm=8b71b93ff9fc75cd598bcfbecc71447a319b6909af27949ca84ab2ddd47cb7ed&',
+    width          = 120,
+    height         = 80,
+    transparentBg  = true,
+}
+
+--Default components for new players.
+Config.DefaultVisible = {
+    portrait    = true,
+    charname    = true,
+    voice       = true,
+    playerid    = true,
+    job         = true,
+    cash        = true,
+    bank        = false, -- disable bank from showing by default
+    minimap     = true,
+    streetclock = true,
+    health      = true,
+    armor       = true,
+    hunger      = true,
+    thirst      = true,
+    vehicle     = true,
+    lights      = true,
+    cinebars    = false,
+    logo        = false,
+}
+
+-- Set a key to false to lock it server-side (players cannot turn it off).
+-- Keys must match those in Config.DefaultVisible above.
+Config.MenuOptions = {
+    portrait    = true,
+    charname    = true,
+    voice       = true,
+    playerid    = true,
+    job         = true,
+    cash        = true,
+    bank        = false, -- Lock Bank from being enabled in /hud 
+    minimap     = true,
+    streetclock = true,
+    health      = true,
+    armor       = true,
+    hunger      = true,
+    thirst      = true,
+    vehicle     = true,
+    lights      = true,
+    cinebars    = true,
+    logo        = true,
+}
 
 --ui colours, injects into the css yeehaw
 Config.Colors = {
@@ -56,24 +98,4 @@ Config.Colors = {
     lightHighbeam  = '#7dd8ff',
     beltWarn       = '#ff4466',
     warnGlow       = 'rgba(255,60,60,0.55)',
-}
-
---Default components for new players.
-Config.DefaultVisible = {
-    portrait  = true,
-    charname  = true,
-    voice     = true,
-    playerid  = false,
-    job       = true,
-    cash      = true,
-    bank      = true,
-    minimap   = true,
-    health    = true,
-    armor     = true,
-    hunger    = true,
-    thirst    = true,
-    vehicle   = true,
-    lights    = true,
-    cinebars  = false,
-    logo      = false,
 }

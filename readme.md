@@ -7,6 +7,8 @@ A modern, highly customizable, and lightweight HUD for **Qbox** and **QBCore** F
 
 * **In-Game Settings Menu:** Players can type `/hud` to toggle individual HUD elements, change their avatar, and switch speed units (MPH/KMH) & More - All saves locally per player!
 
+* **In-Game UI Editor** New Feature as of 14th April 26' - do /hud and click `Edit Layout` to use our new editor!
+
 * **Immersive Speedometer:** Custom vehicle HUD featuring speed, RPM, gear shifting animations, fuel/engine health arcs, seatbelt warnings, and turn signal/headlight indicators.
 
 * **Dynamic Minimap:** Clean square minimap with street names, compass direction, current time, and live waypoint distance tracking.
@@ -15,11 +17,11 @@ A modern, highly customizable, and lightweight HUD for **Qbox** and **QBCore** F
 
 ## Features Coming Soon
 
-* **In-Game UI Editor**
 
-* **Oxygen Status**
+
+* * **Oxygen Status**
  
-* **Helicopter / Boats UI**
+* * **Helicopter / Boats UI**
   
 ## Dependencies
 

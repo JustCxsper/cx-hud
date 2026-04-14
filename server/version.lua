@@ -15,6 +15,7 @@ local function CheckVersion()
                 print("^1[CX Scripts] Current Version: " .. currentVersion .. "^7")
                 print("^2[CX Scripts] Latest Version: " .. latestVersion .. "^7")
                 print("^3[CX Scripts] Please download the latest update from https://github.com/JustCxsper/cx-hud^7")
+                print("^3[CX Scripts] Join our Discord for support: https://discord.gg/XatzNXHeU3^7")
             else
                 print("^2[CX Scripts] " .. resourceName .. " is up to date (v" .. currentVersion .. ")^7")
             end
@@ -25,7 +26,7 @@ local function CheckVersion()
 end
 
 
-Citizen.CreateThread(function()
+CreateThread(function()
     Citizen.Wait(5000)
     CheckVersion()
 end)
