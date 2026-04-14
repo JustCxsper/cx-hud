@@ -3,6 +3,10 @@
 # cx-hud
 A modern, highly customizable, and lightweight HUD for **Qbox** and **QBCore** FiveM servers.
 ![HUD Preview](https://cxsper.dev/assets/cx-hud/images/UI.png)
+# UI Editor
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/b33e40a1-c8b0-490a-96fc-ffc268324eca" />
+
+
 ## Features
 
 * **In-Game Settings Menu:** Players can type `/hud` to toggle individual HUD elements, change their avatar, and switch speed units (MPH/KMH) & More - All saves locally per player!
