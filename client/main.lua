@@ -37,3 +37,17 @@ AddStateBagChangeHandler('invOpen', nil, function(bagName, key, value)
         if hudHidden then SendNUIMessage({ action = 'showHud' }); hudHidden = false end
     end
 end)
+
+exports('showHud', function()
+    if not State.hudShowing then
+        Status.showHud(true)
+        Minimap.setVisible(true)
+    end
+end)
+
+exports('hideHud', function()
+    if State.hudShowing then
+        Status.showHud(false)
+        Minimap.setVisible(false)
+    end
+end)
