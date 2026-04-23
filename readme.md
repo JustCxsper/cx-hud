@@ -72,6 +72,16 @@ This opens the settings panel where players can:
 * Hide/Show the player card, minimap, status rings, or vehicle HUD.
 * Toggle the cinematic black bars.
 
+## Exports (Added with v1.1.1)
+I have added exports in to allow users to `Hide` and `Show` the HUD. This is specifically useful if you need to hide the HUD for e.g Weazle News Broadcasts etc. 
+>Make sure you have started `cx-hud` **BEFORE** the resource using the exports otherwise you will get a NoExport error. 
+
+**Hide the HUD**
+`exports['cx-hud']:hideHud()`
+
+**Show the HUD**
+`exports['cx-hud']:showHud()`
+
 ## Notes
 
 * **Qbox Stress:** If your stress ring sits at 0 and doesn't move when shooting, remember that HUDs only *display* data. You must install a stress system like `jg-stress-addon` to actually do le stress magic!
