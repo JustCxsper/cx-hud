@@ -282,6 +282,8 @@ const handlers = {
         if (data?.menuOptions) window.__menuOptions = data.menuOptions
         applyMinimapGeo(data?.minimapGeo)
         bootHudState()
+        const savedUnit = loadSpeedUnit()
+        if (savedUnit) nuiPost('setSpeedUnit', { unit: savedUnit })
         if (typeof edApplyOnBoot === 'function') edApplyOnBoot()
     },
 
