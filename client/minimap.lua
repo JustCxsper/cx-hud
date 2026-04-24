@@ -125,13 +125,14 @@ return function(State, Utils, readyToRock, Config)
     local lastCanShow = false
     local lastShow    = nil
     local minimapVisible = true
+    local hudVisible     = true
 
     CreateThread(function()
         while true do
             Wait(500)
             local canShow = readyToRock()
             local inCar   = canShow and cache.vehicle ~= nil or false
-            local show    = canShow and minimapVisible and inCar
+            local show    = canShow and hudVisible and minimapVisible and inCar
             if canShow ~= lastCanShow or inCar ~= lastInCar or show ~= lastShow then
                 if canShow then
                     patchMinimap()
@@ -153,5 +154,6 @@ return function(State, Utils, readyToRock, Config)
         calculateMinimapGeo = calculateMinimapGeo,
         repositionMinimap   = repositionMinimap,
         setVisible          = function(v) minimapVisible = v end,
+        setHudVisible       = function(v) hudVisible = v end,
     }
 end

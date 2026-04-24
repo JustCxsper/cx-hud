@@ -40,7 +40,7 @@ end)
 
 exports('showHud', function()
     if not State.hudShowing then
-        Minimap.setVisible(true)
+        Minimap.setHudVisible(true)
         Status.showHud(true)
         Status.pushStatus(true)
     end
@@ -48,8 +48,7 @@ end)
 
 exports('hideHud', function()
     if State.hudShowing then
-        Minimap.setVisible(false)
-        DisplayRadar(false)
+        Minimap.setHudVisible(false)
         Status.showHud(false)
     end
 end)
