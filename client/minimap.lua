@@ -131,7 +131,7 @@ return function(State, Utils, readyToRock, Config)
             Wait(500)
             local canShow = readyToRock()
             local inCar   = canShow and cache.vehicle ~= nil or false
-            local show    = canShow and minimapVisible and (inCar or Config.EnableMinimapOnFoot)
+            local show    = canShow and minimapVisible and inCar
             if canShow ~= lastCanShow or inCar ~= lastInCar or show ~= lastShow then
                 if canShow then
                     patchMinimap()
