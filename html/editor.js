@@ -149,8 +149,9 @@ function buildAllHandles() {
             el.style.left = r.left + 'px'
             el.style.top  = r.top  + 'px'
         }
-        el.style.right  = 'auto'
-        el.style.bottom = 'auto'
+        el.style.right     = 'auto'
+        el.style.bottom    = 'auto'
+        el.style.transform = 'none'
 
         makeHandle(block, el)
     })
