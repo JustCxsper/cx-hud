@@ -1,5 +1,6 @@
 const theWholeHud   = document.getElementById('hud')
 const carCard       = document.getElementById('vehicleCard')
+const weaponCard    = document.getElementById('weaponCard')
 const lightyBois    = document.getElementById('lightsPanel')
 const stressBubble  = document.getElementById('stressPill')
 const staminaBubble = document.getElementById('staminaPill')
@@ -65,7 +66,7 @@ const hudState = {
     portrait: true, charname: true, voice: true, playerid: false,
     logo: true, job: true, cash: true, bank: true,
     minimap: true, streetclock: true, health: true, armor: true, hunger: true, thirst: true,
-    vehicle: true, lights: true, cinebars: false,
+    vehicle: true, lights: true, cinebars: false, weapon: true,
 }
 
 let currentUnit = null
@@ -124,6 +125,7 @@ function injectColors(cols) {
         arcFuel: '--arc-fuel', arcEngine: '--arc-engine',
         lightIndicator: '--light-indicator', lightHeadlight: '--light-headlight', lightHighbeam: '--light-highbeam',
         beltWarn: '--belt-warn', warnGlow: '--warn-glow',
+        ringWeapon: '--ring-weapon', ringWeaponLow: '--ring-weapon-low',
     }
     for (const [k, v] of Object.entries(map)) {
         if (cols[k]) root.setProperty(v, cols[k])
@@ -180,6 +182,10 @@ function applyVisibility() {
     carCard.classList.toggle('hidden', !hudState.vehicle)
     cineTop.classList.toggle('hidden',    !hudState.cinebars)
     cineBottom.classList.toggle('hidden', !hudState.cinebars)
+    if (weaponCard) {
+        weaponCard.classList.toggle('hud-weapon-disabled', !hudState.weapon)
+        if (!hudState.weapon) weaponCard.classList.remove('weapon-visible')
+    }
     const borderRing = document.querySelector('.minimap-border-ring')
     if (borderRing) borderRing.classList.toggle('hidden', !hudState.minimap)
 }
@@ -271,6 +277,16 @@ function applyLogo(logoConfig) {
     placeholder.classList.add('hidden')
     img.onerror = () => { img.classList.add('hidden'); placeholder.classList.remove('hidden') }
 }
+
+
+const elWeaponCard       = document.getElementById('weaponCard')
+const elWeaponImg        = document.getElementById('weaponImg')
+const elWeaponIcon       = document.getElementById('weaponIcon')
+const elWeaponName       = document.getElementById('weaponName')
+const elWeaponAmmoRow    = document.getElementById('weaponAmmoRow')
+const elWeaponAmmoClip   = document.getElementById('weaponAmmoClip')
+const elWeaponAmmoLabel  = document.getElementById('weaponAmmoLabel')
+const elWeaponMeleeLabel = document.getElementById('weaponMeleeLabel')
 
 const handlers = {
     initConfig(data) {
@@ -395,6 +411,72 @@ const handlers = {
 
     updateLights(data) {
         refreshLights(data)
+    },
+
+
+    updateWeapon(data) {
+        if (!elWeaponCard) return
+        if (!data.show || !hudState.weapon) {
+            elWeaponCard.classList.remove('weapon-visible')
+            return
+        }
+
+        elWeaponCard.classList.remove('hidden', 'hud-weapon-disabled')
+        requestAnimationFrame(() => elWeaponCard.classList.add('weapon-visible'))
+
+        if (elWeaponImg && elWeaponIcon && data.weapName) {
+            const imageBase = data.weaponImageBase
+            const sources = imageBase
+                ? (/\.(png|webp)$/i.test(imageBase) ? [imageBase] : [imageBase + '.png', imageBase + '.webp'])
+                : []
+            const key = sources.join('|')
+
+            if (elWeaponImg.dataset.srcKey !== key) {
+                elWeaponImg.dataset.srcKey = key
+                elWeaponImg.dataset.tryIndex = '0'
+                elWeaponImg.classList.add('hidden')
+                elWeaponIcon.classList.add('hidden')
+
+                const trySource = () => {
+                    const index = Number(elWeaponImg.dataset.tryIndex || 0)
+                    const src = sources[index]
+                    if (!src) {
+                        elWeaponImg.classList.add('hidden')
+                        elWeaponIcon.classList.remove('hidden')
+                        return
+                    }
+                    elWeaponImg.src = src
+                }
+
+                elWeaponImg.onload = () => {
+                    elWeaponImg.classList.remove('hidden')
+                    elWeaponIcon.classList.add('hidden')
+                }
+
+                elWeaponImg.onerror = () => {
+                    elWeaponImg.dataset.tryIndex = String(Number(elWeaponImg.dataset.tryIndex || 0) + 1)
+                    trySource()
+                }
+
+                trySource()
+            }
+        }
+
+        if (elWeaponName) elWeaponName.textContent = data.weapName
+            ? data.weapName.replace('weapon_', '').replace(/_/g, ' ').replace(/\w/g, c => c.toUpperCase())
+            : 'Unknown'
+
+        const isMeleeOrThrow = data.isMelee || data.isThrow
+        if (elWeaponAmmoRow)    elWeaponAmmoRow.classList.toggle('hidden',    isMeleeOrThrow)
+        if (elWeaponMeleeLabel) elWeaponMeleeLabel.classList.toggle('hidden', !isMeleeOrThrow)
+
+        if (!isMeleeOrThrow) {
+            if (elWeaponAmmoClip)  elWeaponAmmoClip.textContent = data.ammoClip ?? 0
+            if (elWeaponAmmoLabel) elWeaponAmmoLabel.textContent = data.ammoLabel || 'AMMO'
+            elWeaponCard.classList.toggle('ammo-low', !!data.low)
+        } else {
+            elWeaponCard.classList.remove('ammo-low')
+        }
     },
 }
 

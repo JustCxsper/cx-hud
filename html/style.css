@@ -1,40 +1,45 @@
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --panel:          rgba(6, 9, 16, 0.88);
-  --panel2:         rgba(10, 15, 24, 0.94);
-  --border:         rgba(255,255,255,0.07);
-  --border2:        rgba(255,255,255,0.12);
-  --shadow:         0 14px 36px rgba(0,0,0,0.45), 0 2px 6px rgba(0,0,0,0.3);
-  --text:           #d9d9d9;
-  --muted:          #7a87a4;
-  --accent:         #7ee8ca;
-  --cash:           #5cf0a0;
-  --bank:           #7dd8ff;
-  --ring-health:    #ff5577;
-  --ring-armor:     #7ba4ff;
-  --ring-hunger:    #f5a623;
-  --ring-thirst:    #38c9ff;
-  --ring-stress:    #ff2d6b;
-  --ring-stamina:   #9f78ff;
-  --arc-fuel:       #7ee8ca;
-  --arc-engine:     #8fb8ff;
+  --panel: rgba(6, 9, 16, 0.88);
+  --panel2: rgba(10, 15, 24, 0.94);
+  --border: rgba(255, 255, 255, 0.07);
+  --border2: rgba(255, 255, 255, 0.12);
+  --shadow: 0 14px 36px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3);
+  --text: #d9d9d9;
+  --muted: #7a87a4;
+  --accent: #7ee8ca;
+  --cash: #5cf0a0;
+  --bank: #7dd8ff;
+  --ring-health: #ff5577;
+  --ring-armor: #7ba4ff;
+  --ring-hunger: #f5a623;
+  --ring-thirst: #38c9ff;
+  --ring-stress: #ff2d6b;
+  --ring-stamina: #9f78ff;
+  --arc-fuel: #7ee8ca;
+  --arc-engine: #8fb8ff;
   --light-indicator: #f5a623;
   --light-headlight: #fff8c0;
-  --light-highbeam:  #7dd8ff;
-  --belt-warn:      #ff4466;
-  --warn-glow:      rgba(255,60,60,0.55);
-  --mm-left:        26px;
-  --mm-top:         794px;
-  --mm-w:           315px;
-  --mm-h:           200px;
-  --logo-w:         120px;
-  --logo-h:         40px;
-  --sz-inset-x:     0vw;
-  --sz-inset-y:     0vh;
+  --light-highbeam: #7dd8ff;
+  --belt-warn: #ff4466;
+  --warn-glow: rgba(255, 60, 60, 0.55);
+  --mm-left: 26px;
+  --mm-top: 794px;
+  --mm-w: 315px;
+  --mm-h: 200px;
+  --logo-w: 120px;
+  --logo-h: 40px;
+  --sz-inset-x: 0vw;
+  --sz-inset-y: 0vh;
 }
 
-*, *::before, *::after { box-sizing: border-box; user-select: none; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  user-select: none;
+}
 
 body {
   margin: 0;
@@ -56,8 +61,15 @@ body {
   opacity: 0;
 }
 
-.hidden { display: none !important; }
-#hud    { position: absolute; inset: 0; pointer-events: none; }
+.hidden {
+  display: none !important;
+}
+
+#hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
 
 .glass {
   background: linear-gradient(160deg, var(--panel2) 0%, var(--panel) 100%);
@@ -73,18 +85,27 @@ body {
   background: #000;
   z-index: 7000;
   pointer-events: none;
-  transition: transform .4s cubic-bezier(.4,0,.2,1);
+  transition: transform .4s cubic-bezier(.4, 0, .2, 1);
 }
 
-.cinebar-top    { top: 0;    transform: translateY(0); }
-.cinebar-bottom { bottom: 0; transform: translateY(0); }
+.cinebar-top {
+  top: 0;
+  transform: translateY(0);
+}
+
+.cinebar-bottom {
+  bottom: 0;
+  transform: translateY(0);
+}
 
 .cinebar.hidden {
   display: block !important;
   transform: translateY(-100%);
 }
 
-.cinebar-bottom.hidden { transform: translateY(100%); }
+.cinebar-bottom.hidden {
+  transform: translateY(100%);
+}
 
 .top-left {
   position: absolute;
@@ -100,20 +121,26 @@ body {
   padding: 10px 14px 10px 10px;
 }
 
-.char-portrait { position: relative; flex: 0 0 auto; }
+.char-portrait {
+  position: relative;
+  flex: 0 0 auto;
+}
 
 .portrait-frame {
   width: 46px;
   height: 46px;
   border-radius: 14px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
   border: 1px solid var(--border2);
   display: grid;
   place-items: center;
   overflow: hidden;
 }
 
-.portrait-icon { font-size: 22px; color: var(--muted); }
+.portrait-icon {
+  font-size: 22px;
+  color: var(--muted);
+}
 
 .portrait-img {
   width: 100%;
@@ -122,8 +149,16 @@ body {
   border-radius: 13px;
 }
 
-.tl-info { display: flex; flex-direction: column; gap: 4px; }
-.tl-name-row { display: flex; align-items: center; }
+.tl-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tl-name-row {
+  display: flex;
+  align-items: center;
+}
 
 .tl-charname {
   font-family: 'Rajdhani', sans-serif;
@@ -137,7 +172,11 @@ body {
   max-width: 120px;
 }
 
-.tl-row { display: flex; align-items: center; gap: 5px; }
+.tl-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
 
 .tl-label {
   font-size: 9px;
@@ -197,21 +236,35 @@ body {
   min-height: 36px;
 }
 
-.tr-ico { font-size: 11px; color: var(--muted); flex: 0 0 14px; text-align: center; }
+.tr-ico {
+  font-size: 11px;
+  color: var(--muted);
+  flex: 0 0 14px;
+  text-align: center;
+}
 
-.job-card { gap: 10px; }
+.job-card {
+  gap: 10px;
+}
 
 .tr-ico-wrap {
-  width: 22px; height: 22px;
+  width: 22px;
+  height: 22px;
   border-radius: 8px;
-  background: rgba(255,255,255,0.05);
-  display: grid; place-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  display: grid;
+  place-items: center;
   font-size: 10px;
   color: var(--muted);
   flex: 0 0 22px;
 }
 
-.tr-meta { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.tr-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
 
 .tr-meta strong {
   font-size: 12px;
@@ -229,8 +282,15 @@ body {
   text-overflow: ellipsis;
 }
 
-.tr-money-group { display: flex; flex-direction: column; gap: 6px; }
-.money-card     { justify-content: flex-start; }
+.tr-money-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.money-card {
+  justify-content: flex-start;
+}
 
 .money-card strong {
   font-family: 'Rajdhani', sans-serif;
@@ -240,10 +300,21 @@ body {
   flex: 1;
 }
 
-.cash-ico         { color: var(--cash); }
-.bank-ico         { color: var(--bank); }
-.cash-card strong { color: var(--cash); }
-.bank-card strong { color: var(--bank); }
+.cash-ico {
+  color: var(--cash);
+}
+
+.bank-ico {
+  color: var(--bank);
+}
+
+.cash-card strong {
+  color: var(--cash);
+}
+
+.bank-card strong {
+  color: var(--bank);
+}
 
 .minimap-cluster {
   position: absolute;
@@ -268,17 +339,24 @@ body {
 }
 
 .dir-badge {
-  width: 28px; height: 28px;
+  width: 28px;
+  height: 28px;
   border-radius: 10px;
-  display: grid; place-items: center;
-  background: rgba(255,255,255,0.07);
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.07);
   font-family: 'Rajdhani', sans-serif;
   font-size: 14px;
   font-weight: 700;
   flex: 0 0 28px;
 }
 
-.street-copy-wrap { flex: 1; min-width: 0; display: flex; align-items: center; }
+.street-copy-wrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
 
 .street-copy {
   display: flex;
@@ -294,7 +372,10 @@ body {
   text-overflow: ellipsis;
 }
 
-.street-copy span { font-size: 10px; color: var(--muted); }
+.street-copy span {
+  font-size: 10px;
+  color: var(--muted);
+}
 
 .clock-waypoint-wrap {
   position: relative;
@@ -318,7 +399,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border);
   font-family: 'Rajdhani', sans-serif;
   font-weight: 700;
@@ -328,7 +409,10 @@ body {
   white-space: nowrap;
 }
 
-.clock-badge i { font-size: 11px; opacity: 0.75; }
+.clock-badge i {
+  font-size: 11px;
+  opacity: 0.75;
+}
 
 .waypoint-chip {
   color: var(--accent) !important;
@@ -336,8 +420,13 @@ body {
   pointer-events: none;
 }
 
-.waypoint-chip.chip-visible { opacity: 1; }
-#clockBadge.chip-fading     { opacity: 0; }
+.waypoint-chip.chip-visible {
+  opacity: 1;
+}
+
+#clockBadge.chip-fading {
+  opacity: 0;
+}
 
 .minimap-frame {
   position: absolute;
@@ -380,7 +469,8 @@ body {
 
 .status-pill {
   position: relative;
-  width: 39px; height: 39px;
+  width: 39px;
+  height: 39px;
   flex: 0 0 39px;
   display: flex;
   align-items: center;
@@ -393,8 +483,8 @@ body {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: linear-gradient(160deg, rgba(10,15,26,0.96), rgba(6,9,18,0.92));
-  border: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(160deg, rgba(10, 15, 26, 0.96), rgba(6, 9, 18, 0.92));
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .status-pill.stress,
@@ -414,14 +504,15 @@ body {
 .s-ring-svg {
   position: absolute;
   inset: 0;
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
   transform: rotate(-90deg);
   overflow: visible;
 }
 
 .s-ring-track {
   fill: none;
-  stroke: rgba(255,255,255,0.1);
+  stroke: rgba(255, 255, 255, 0.1);
   stroke-width: 3;
 }
 
@@ -431,20 +522,44 @@ body {
   stroke-linecap: round;
   stroke-dasharray: 125.66 125.66;
   stroke-dashoffset: 0;
-  transition: stroke-dashoffset .35s cubic-bezier(.4,0,.2,1);
+  transition: stroke-dashoffset .35s cubic-bezier(.4, 0, .2, 1);
 }
 
-.health  .s-ring-fill { stroke: var(--ring-health);  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ring-health)  80%, transparent)); }
-.armor   .s-ring-fill { stroke: var(--ring-armor);   filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ring-armor)   80%, transparent)); }
-.hunger  .s-ring-fill { stroke: var(--ring-hunger);  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ring-hunger)  80%, transparent)); }
-.thirst  .s-ring-fill { stroke: var(--ring-thirst);  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ring-thirst)  80%, transparent)); }
-.stress  .s-ring-fill { stroke: var(--ring-stress);  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ring-stress)  80%, transparent)); }
-.stamina .s-ring-fill { stroke: var(--ring-stamina); filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ring-stamina) 80%, transparent)); }
+.health .s-ring-fill {
+  stroke: var(--ring-health);
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ring-health) 80%, transparent));
+}
+
+.armor .s-ring-fill {
+  stroke: var(--ring-armor);
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ring-armor) 80%, transparent));
+}
+
+.hunger .s-ring-fill {
+  stroke: var(--ring-hunger);
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ring-hunger) 80%, transparent));
+}
+
+.thirst .s-ring-fill {
+  stroke: var(--ring-thirst);
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ring-thirst) 80%, transparent));
+}
+
+.stress .s-ring-fill {
+  stroke: var(--ring-stress);
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ring-stress) 80%, transparent));
+}
+
+.stamina .s-ring-fill {
+  stroke: var(--ring-stamina);
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ring-stamina) 80%, transparent));
+}
 
 .s-inner {
-  width: 32px; height: 32px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: linear-gradient(160deg, rgba(14,20,34,0.97), rgba(8,12,22,0.95));
+  background: linear-gradient(160deg, rgba(14, 20, 34, 0.97), rgba(8, 12, 22, 0.95));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -452,22 +567,282 @@ body {
   z-index: 1;
 }
 
-.s-ico          { font-size: 13px; line-height: 1; }
-.health  .s-ico { color: var(--ring-health); }
-.armor   .s-ico { color: var(--ring-armor); }
-.hunger  .s-ico { color: var(--ring-hunger); }
-.thirst  .s-ico { color: var(--ring-thirst); }
-.stress  .s-ico { color: var(--ring-stress); }
-.stamina .s-ico { color: var(--ring-stamina); }
+.s-ico {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.health .s-ico {
+  color: var(--ring-health);
+}
+
+.armor .s-ico {
+  color: var(--ring-armor);
+}
+
+.hunger .s-ico {
+  color: var(--ring-hunger);
+}
+
+.thirst .s-ico {
+  color: var(--ring-thirst);
+}
+
+.stress .s-ico {
+  color: var(--ring-stress);
+}
+
+.stamina .s-ico {
+  color: var(--ring-stamina);
+}
 
 @keyframes warnPulse {
-  0%, 100% { box-shadow: none; }
-  50%       { box-shadow: 0 0 10px 2px var(--warn-glow); }
+
+  0%,
+  100% {
+    box-shadow: none;
+  }
+
+  50% {
+    box-shadow: 0 0 10px 2px var(--warn-glow);
+  }
 }
 
-.status-pill.warn-low { animation: warnPulse 1.4s ease-in-out infinite; }
+.status-pill.warn-low {
+  animation: warnPulse 1.4s ease-in-out infinite;
+}
+
 .status-pill.warn-low .s-ring-fill {
   stroke: #ff3355 !important;
-  filter: drop-shadow(0 0 5px rgba(255,40,60,0.9)) !important;
+  filter: drop-shadow(0 0 5px rgba(255, 40, 60, 0.9)) !important;
 }
 
+.weapon-card {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 12px 9px 9px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, .11);
+  width: 222px;
+  min-width: 222px;
+  max-width: 222px;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  transform: translateY(8px) scale(.97);
+  transition: opacity .3s cubic-bezier(.4, 0, .2, 1), transform .3s cubic-bezier(.4, 0, .2, 1);
+  overflow: hidden;
+  background: radial-gradient(circle at 18% 0%, rgba(143, 184, 255, .10), transparent 34%), linear-gradient(135deg, rgba(13, 18, 29, .96), rgba(7, 10, 17, .92));
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .42), inset 0 1px 0 rgba(255, 255, 255, .055)
+}
+
+.weapon-card:before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, .055) 0%, transparent 46%);
+  pointer-events: none
+}
+
+.weapon-card.weapon-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1)
+}
+
+.weapon-card.hidden,
+.weapon-card.hud-weapon-disabled {
+  display: none
+}
+
+.weapon-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 50px;
+  flex-shrink: 0;
+  position: relative;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .045), rgba(255, 255, 255, .018));
+  border: 1px solid rgba(255, 255, 255, .055);
+  overflow: visible
+}
+
+.weapon-icon-wrap:after {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  border-radius: 18px;
+  opacity: 0;
+  background: radial-gradient(ellipse at center, rgba(255, 77, 95, .34) 0%, rgba(255, 77, 95, .14) 38%, transparent 72%);
+  filter: blur(14px);
+  pointer-events: none;
+  transform: scale(.9);
+  will-change: opacity, transform
+}
+
+.weapon-img {
+  width: 92%;
+  height: 92%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .72)) brightness(1.05);
+  transition: filter .3s ease, transform .3s ease;
+  display: block;
+  position: relative;
+  z-index: 1
+}
+
+.weapon-img.hidden {
+  display: none
+}
+
+.weapon-icon-fallback {
+  color: var(--muted);
+  font-size: 22px;
+  position: relative;
+  z-index: 1
+}
+
+.weapon-icon-fallback.hidden {
+  display: none
+}
+
+@keyframes weaponLowHaloPulse {
+  0% {
+    opacity: .10;
+    transform: scale(.92)
+  }
+
+  45% {
+    opacity: .42;
+    transform: scale(1.05)
+  }
+
+  100% {
+    opacity: .10;
+    transform: scale(.92)
+  }
+}
+
+@keyframes weaponImagePulse {
+  0% {
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .72)) drop-shadow(0 0 0 rgba(255, 77, 95, 0)) brightness(1.04);
+    transform: scale(1)
+  }
+
+  45% {
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .72)) drop-shadow(0 0 7px rgba(255, 77, 95, .52)) brightness(1.09);
+    transform: scale(1.018)
+  }
+
+  100% {
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .72)) drop-shadow(0 0 0 rgba(255, 77, 95, 0)) brightness(1.04);
+    transform: scale(1)
+  }
+}
+
+.weapon-card.ammo-low .weapon-icon-wrap:after {
+  animation: weaponLowHaloPulse 2.15s cubic-bezier(.45, 0, .55, 1) infinite
+}
+
+.weapon-card.ammo-low .weapon-img {
+  animation: weaponImagePulse 2.15s cubic-bezier(.45, 0, .55, 1) infinite
+}
+
+.weapon-card.ammo-low .weapon-icon-fallback {
+  color: var(--ring-weapon-low, #ff4d5f);
+  filter: drop-shadow(0 0 6px rgba(255, 77, 95, .48))
+}
+
+.weapon-divider {
+  width: 1px;
+  align-self: stretch;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, .16), transparent);
+  flex-shrink: 0;
+  margin: 3px 0
+}
+
+.weapon-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  width: 112px;
+  flex: 0 0 112px;
+  overflow: hidden
+}
+
+.weapon-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  color: rgba(170, 181, 210, .88);
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  line-height: 1.15
+}
+
+.weapon-ammo-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  margin-top: 1px;
+  width: 112px;
+  min-width: 112px;
+  max-width: 112px
+}
+
+.weapon-ammo-clip {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 39px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: .95;
+  transition: color .25s ease, text-shadow .25s ease;
+  letter-spacing: -.8px;
+  width: 45px;
+  min-width: 45px;
+  max-width: 45px;
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1
+}
+
+.weapon-ammo-label {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: rgba(232, 201, 126, .95);
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  line-height: 1;
+  min-width: 42px;
+  text-align: left;
+  transform: translateY(1px);
+  text-shadow: 0 0 9px rgba(232, 201, 126, .18)
+}
+
+.weapon-card.ammo-low .weapon-ammo-clip {
+  color: var(--ring-weapon-low, #ff4d5f);
+  text-shadow: 0 0 12px rgba(255, 77, 95, .45)
+}
+
+.weapon-melee-label {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-top: 2px
+}

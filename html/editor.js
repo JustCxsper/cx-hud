@@ -8,6 +8,7 @@ const DRAGGABLES = [
     { id: 'statusRow',      sel: '#statusRow',       label: 'Status Rings',   hasOrient: true },
     { id: 'vehicleCard',    sel: '#vehicleCard',      label: 'Speedometer',    canHide: true },
     { id: 'lightsPanel',    sel: '#lightsPanel',      label: 'Lights Panel',   canHide: true },
+    { id: 'weaponCard',     sel: '#weaponCard',       label: 'Weapon & Ammo',  canHide: true },
 ]
 
 
@@ -18,6 +19,7 @@ let savedLayout    = {}
 let activePanel    = null
 let dragState      = null
 let dragHandles    = []
+let handleSyncRaf   = null
 let showingVeh     = true
 let mmHomePosition = null
 
@@ -103,11 +105,17 @@ function sendMinimapOffset(clusterEl) {
 
 function syncHandlePos(h) {
     const r = getRect(h.el)
-    h.handle.style.width    = (r.width  || 80) + 'px'
-    h.handle.style.height   = (r.height || 40) + 'px'
-    h.handle.style.left     = r.left + 'px'
-    h.handle.style.top      = r.top  + 'px'
+    h.handle.style.width    = Math.ceil(r.width  || h.el.offsetWidth  || 80) + 'px'
+    h.handle.style.height   = Math.ceil(r.height || h.el.offsetHeight || 40) + 'px'
+    h.handle.style.left     = Math.round(r.left) + 'px'
+    h.handle.style.top      = Math.round(r.top)  + 'px'
     h.handle.style.position = 'absolute'
+}
+
+function syncAllHandles() {
+    if (!editorOpen) return
+    dragHandles.forEach(syncHandlePos)
+    handleSyncRaf = requestAnimationFrame(syncAllHandles)
 }
 
 function makeHandle(block, el) {
@@ -126,6 +134,11 @@ function makeHandle(block, el) {
     syncHandlePos(h)
 
     handle.addEventListener('pointerdown', e => startDrag(e, h))
+
+    if (window.ResizeObserver) {
+        h.ro = new ResizeObserver(() => syncHandlePos(h))
+        h.ro.observe(el)
+    }
 
     if (!block.noPanel) {
         handle.addEventListener('click', e => {
@@ -151,7 +164,12 @@ function buildAllHandles() {
         }
         el.style.right     = 'auto'
         el.style.bottom    = 'auto'
-        el.style.transform = 'none'
+
+        const savedScale = savedLayout[block.id]?.scale
+        if (savedScale != null) {
+            el.style.transformOrigin = '0 0'
+            el.style.transform = `scale(${savedScale})`
+        }
 
         makeHandle(block, el)
     })
@@ -162,7 +180,8 @@ function buildAllHandles() {
 }
 
 function destroyAllHandles() {
-    dragHandles.forEach(h => h.handle.remove())
+    if (handleSyncRaf) { cancelAnimationFrame(handleSyncRaf); handleSyncRaf = null }
+    dragHandles.forEach(h => { if (h.ro) h.ro.disconnect(); h.handle.remove() })
     dragHandles = []
 }
 
@@ -523,6 +542,8 @@ function openEditor() {
         showingVeh = !document.querySelector('#vehicleCard')?.classList.contains('hidden')
         theOverlay.querySelector('#edVehBtn').classList.toggle('on', showingVeh)
         buildAllHandles()
+        if (handleSyncRaf) cancelAnimationFrame(handleSyncRaf)
+        handleSyncRaf = requestAnimationFrame(syncAllHandles)
     }, 60)
 
     nuiPost('editorOpened')

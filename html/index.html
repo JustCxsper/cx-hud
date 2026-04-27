@@ -213,6 +213,22 @@
       </div>
     </div>
 
+    <div class="weapon-card glass hidden" id="weaponCard">
+      <div class="weapon-icon-wrap" id="weaponIconWrap">
+        <img class="weapon-img" id="weaponImg" src="" alt="">
+        <i class="fa-solid fa-gun weapon-icon-fallback hidden" id="weaponIcon"></i>
+      </div>
+      <div class="weapon-divider"></div>
+      <div class="weapon-info">
+        <span class="weapon-name" id="weaponName">Pistol</span>
+        <div class="weapon-ammo-row" id="weaponAmmoRow">
+          <span class="weapon-ammo-clip" id="weaponAmmoClip">30</span>
+          <span class="weapon-ammo-label" id="weaponAmmoLabel">9MM</span>
+        </div>
+        <span class="weapon-melee-label hidden" id="weaponMeleeLabel">Melee</span>
+      </div>
+    </div>
+
   </div>
 
   <div id="hudMenu" class="hidden">
@@ -282,6 +298,15 @@
             <label class="hud-toggle-row">
               <div class="hud-toggle-label"><i class="fa-solid fa-building-columns"></i><div><span>Bank</span><small>Account balance</small></div></div>
               <label class="toggle-switch"><input type="checkbox" id="tog-bank" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </label>
+          </div>
+
+
+          <div class="pane-section-title"><i class="fa-solid fa-gun"></i> Weapon</div>
+          <div class="pane-grid">
+            <label class="hud-toggle-row">
+              <div class="hud-toggle-label"><i class="fa-solid fa-gun"></i><div><span>Weapon &amp; Ammo</span><small>Current weapon and clip ammo</small></div></div>
+              <label class="toggle-switch"><input type="checkbox" id="tog-weapon" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
             </label>
           </div>
 

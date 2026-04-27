@@ -19,15 +19,13 @@ A modern, highly customizable, and lightweight HUD for **Qbox** and **QBCore** F
 
 * **Responsive:** Supports up to 4K resolution.
 
+* **Weapon/Ammo UI:** Added 27th April 2026
+
 ## Features Coming Soon
-
-
 
 * * **Oxygen Status**
  
 * * **Helicopter / Boats UI**
-
-* * **Weapon/Ammo UI**
  
 * * **ps-buffs integration**
   

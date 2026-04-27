@@ -130,7 +130,7 @@ return function(State, Utils, Vehicle, Minimap, readyToRock, Config)
             thresholds = {
                 health = Config.WarnHealth, hunger = Config.WarnHunger,
                 thirst = Config.WarnThirst, fuel   = Config.WarnFuel,
-                engine = Config.WarnEngine,
+                engine = Config.WarnEngine, ammoClip = Config.WarnAmmoClip,
             },
         })
     end

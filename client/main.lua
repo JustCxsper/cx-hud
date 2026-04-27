@@ -23,6 +23,7 @@ end
 local Utils   = lib.load('client/utils')(Config)
 local Minimap = lib.load('client/minimap')(State, Utils, readyToRock, Config)
 local Vehicle = lib.load('client/vehicle')(State, Utils, Config)
+local Weapon  = lib.load('client/weapon')(State, Utils, readyToRock, Config)
 local Status  = lib.load('client/status')(State, Utils, Vehicle, Minimap, readyToRock, Config)
 lib.load('client/seatbelt')(State, Utils, Config)
 lib.load('client/lights')(State, Utils, readyToRock)

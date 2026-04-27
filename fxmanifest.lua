@@ -33,6 +33,8 @@ client_scripts {
     'client/utils.lua',
     'client/minimap.lua',
     'client/vehicle.lua',
+    'client/weapon_data.lua',
+    'client/weapon.lua',
     'client/seatbelt.lua',
     'client/lights.lua',
     'client/status.lua',

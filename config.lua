@@ -23,12 +23,25 @@ Config.WarnHunger  = 15
 Config.WarnThirst  = 15
 Config.WarnFuel    = 10
 Config.WarnEngine  = 20
+Config.WarnAmmoClip = 5 -- when should the ammo counter go red and warn peeps that theyre running outta ammo
 
 Config.Logo = {
     url            = 'https://cdn.discordapp.com/attachments/1492598634821452121/1493684431263764691/cxsperdev-logo.png?ex=69dfdd87&is=69de8c07&hm=8b71b93ff9fc75cd598bcfbecc71447a319b6909af27949ca84ab2ddd47cb7ed&',
     width          = 120,
     height         = 80,
     transparentBg  = true,
+}
+
+
+-- used for weapon item images only (Don't touch unless you know what you're doing)
+Config.InventoryImages = {
+    autoDetect = true,
+    inventories = {
+        { resource = 'ox_inventory',   path = 'nui://ox_inventory/web/images/%s' },
+        { resource = 'qb-inventory',   path = 'nui://qb-inventory/html/images/%s' },
+        { resource = 'ps-inventory',   path = 'nui://ps-inventory/html/images/%s' },
+        { resource = 'core_inventory', path = 'nui://core_inventory/html/img/%s' },
+    }
 }
 
 --Default components for new players.
@@ -50,6 +63,7 @@ Config.DefaultVisible = {
     lights      = true,
     cinebars    = false,
     logo        = false,
+    weapon      = true,
 }
 
 -- Set a key to false to lock it server-side (players cannot turn it off).
@@ -72,6 +86,7 @@ Config.MenuOptions = {
     lights      = true,
     cinebars    = true,
     logo        = true,
+    weapon      = true,
 }
 
 --ui colours, injects into the css yeehaw
@@ -98,4 +113,6 @@ Config.Colors = {
     lightHighbeam  = '#7dd8ff',
     beltWarn       = '#ff4466',
     warnGlow       = 'rgba(255,60,60,0.55)',
+    ringWeapon     = '#e8c97e',
+    ringWeaponLow  = '#ff5555',
 }
