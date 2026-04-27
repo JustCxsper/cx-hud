@@ -80,8 +80,18 @@ I have added exports in to allow users to `Hide` and `Show` the HUD. This is spe
 **Show the HUD**
 `exports['cx-hud']:showHud()`
 
-## Notes
+## Special Thanks + Contributors
 
+Thanks to everyone who has helped make this happen, even if it's small or big. Every little helps! Here's a list of folks who have helped the project in 1 way or another. 
+
+* **Scorpion7162:** Mahoosive PR that helped me really get the project underway [HERE](https://github.com/JustCxsper/cx-hud/commit/6e8566f15c10da2fb10fce917a71e947d2ae8a1c).
+
+* **Solaire:** Thanks alot to Solaire for giving me the logic to support multiple inventories for weapon images.
+
+* **ThatMadCap:** Thanks for his release of his HUD, i was able to understand how some of the minimap functionality worked and ported some of the code over as documented [HERE](https://github.com/JustCxsper/cx-hud/blob/5892779958ba06076e163c55cba2e7207057c23e/client/minimap.lua#L29)
+
+
+## Notes
 * **Qbox Stress:** If your stress ring sits at 0 and doesn't move when shooting, remember that HUDs only *display* data. You must install a stress system like `jg-stress-addon` to actually do le stress magic!
 
 ## More Pics
