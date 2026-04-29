@@ -1,10 +1,10 @@
-let redlineRpm  = 85
-let lastGear    = -1
+let redlineRpm     = 85
+let lastGear       = -1
 let gearFlashTimer = null
 
 function updateSpeedRing(spd) {
     const pct = Math.max(0, Math.min(100, (spd || 0) / 220 * 100))
-    goFastRing.style.strokeDashoffset = 418 - (pct / 100) * 418
+    speedRing.style.strokeDashoffset = 418 - (pct / 100) * 418
 }
 
 function rpmDisplay(pct) {
@@ -27,16 +27,16 @@ function handleGearChange(newGear) {
     lastGear = newGear
     if (newGear === 'R' || newGear === '0') return
     if (gearFlashTimer) clearTimeout(gearFlashTimer)
-    gearBadge.classList.add('gear-shift')
+    gearDisplay.classList.add('gear-shift')
     gearFlashTimer = setTimeout(() => {
-        gearBadge.classList.remove('gear-shift')
+        gearDisplay.classList.remove('gear-shift')
         gearFlashTimer = null
     }, 280)
 }
 
 function applyRedlineFlash(rpmPct) {
     const isRed = rpmPct >= redlineRpm
-    goFastRing.classList.toggle('redline-active', isRed)
+    speedRing.classList.toggle('redline-active', isRed)
 }
 
 function buildRedlineMarker(threshold) {

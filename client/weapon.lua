@@ -1,4 +1,4 @@
-return function(State, Utils, readyToRock, Config)
+return function(State, Utils, isReady, Config)
     local WeaponData = CX_HUD_WEAPON_DATA or {}
     local WEAPONS = WeaponData.WEAPONS or {}
     local MELEE = WeaponData.MELEE or {}
@@ -60,14 +60,14 @@ return function(State, Utils, readyToRock, Config)
             if lastWeaponPayload and (now - lastWeaponSeenAt) < 300 then
                 if prevWeapon.show == false then
                     prevWeapon = lastWeaponPayload
-                    Utils.yeet('updateWeapon', lastWeaponPayload)
+                    Utils.sendNui('updateWeapon', lastWeaponPayload)
                 end
                 return
             end
             if prevWeapon.show ~= false then
                 prevWeapon = { show = false }
                 lastAmmoByWeapon = {}
-                Utils.yeet('updateWeapon', { show = false })
+                Utils.sendNui('updateWeapon', { show = false })
             end
             return
         end
@@ -78,15 +78,16 @@ return function(State, Utils, readyToRock, Config)
 
         if not isMelee then
             local hasClipAmmo, clipAmmo = GetAmmoInClip(ped, hash)
-            ammoClip = (hasClipAmmo and tonumber(clipAmmo)) or 0
+            ammoClip  = (hasClipAmmo and tonumber(clipAmmo)) or 0
             ammoTotal = tonumber(GetAmmoInPedWeapon(ped, hash)) or 0
+            if ammoTotal == 0 then ammoClip = 0 end
 
             local cachedClip = lastAmmoByWeapon[hash]
-            local switching = nativeBool('IsPedSwitchingWeapon', ped)
-            local notReady = nativeBool('IsPedWeaponReadyToShoot', ped) == false
-            local notArmed = nativeBool('IsPedArmed', ped, 4) == false
+            local switching  = nativeBool('IsPedSwitchingWeapon', ped)
+            local notReady   = nativeBool('IsPedWeaponReadyToShoot', ped) == false
+            local notArmed   = nativeBool('IsPedArmed', ped, 4) == false
 
-            if ammoClip == 0 and cachedClip and cachedClip > 0 and (switching or notReady or notArmed) then
+            if ammoTotal > 0 and ammoClip == 0 and cachedClip and cachedClip > 0 and (switching or notReady or notArmed) then
                 ammoClip = cachedClip
             else
                 lastAmmoByWeapon[hash] = ammoClip
@@ -115,13 +116,13 @@ return function(State, Utils, readyToRock, Config)
         end
         if changed then
             prevWeapon = payload
-            Utils.yeet('updateWeapon', payload)
+            Utils.sendNui('updateWeapon', payload)
         end
     end
 
     CreateThread(function()
         while true do
-            if readyToRock() and not State.menuIsOpen and not State.gameIsPaused then
+            if isReady() and not State.menuIsOpen and not State.gameIsPaused then
                 pushWeapon()
                 Wait(Config.UpdateInterval)
             else

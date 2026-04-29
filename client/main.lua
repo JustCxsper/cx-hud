@@ -1,12 +1,12 @@
 local hudHidden = false
 local State = {
-    whoAmI          = {},
+    playerData      = {},
     hudShowing      = false,
-    diddlyLoaded    = false,
-    actuallySpawned = false,
-    mouthRunning    = false,
+    coreLoaded      = false,
+    playerSpawned   = false,
+    isTalking       = false,
     voiceLabel      = Config.DefaultVoice,
-    buckledUp       = false,
+    seatbeltOn      = false,
     ejected         = false,
     menuIsOpen      = false,
     gameIsPaused    = false,
@@ -16,19 +16,19 @@ local State = {
     },
 }
 
-local function readyToRock()
-    return State.diddlyLoaded and State.actuallySpawned and LocalPlayer.state.isLoggedIn
+local function isReady()
+    return State.coreLoaded and State.playerSpawned and LocalPlayer.state.isLoggedIn
 end
 
 local Utils   = lib.load('client/utils')(Config)
-local Minimap = lib.load('client/minimap')(State, Utils, readyToRock, Config)
+local Minimap = lib.load('client/minimap')(State, Utils, isReady, Config)
 local Vehicle = lib.load('client/vehicle')(State, Utils, Config)
-local Weapon  = lib.load('client/weapon')(State, Utils, readyToRock, Config)
-local Status  = lib.load('client/status')(State, Utils, Vehicle, Minimap, readyToRock, Config)
+local Weapon  = lib.load('client/weapon')(State, Utils, isReady, Config)
+local Status  = lib.load('client/status')(State, Utils, Vehicle, Minimap, isReady, Config)
 lib.load('client/seatbelt')(State, Utils, Config)
-lib.load('client/lights')(State, Utils, readyToRock)
+lib.load('client/lights')(State, Utils, isReady)
 lib.load('client/nui')(State, Utils, Minimap, Status, Vehicle, Config)
-lib.load('client/events')(State, Utils, Minimap, Status, Vehicle, readyToRock, Config)
+lib.load('client/events')(State, Utils, Minimap, Status, Vehicle, isReady, Config)
 
 AddStateBagChangeHandler('invOpen', nil, function(bagName, key, value)
     if not bagName:find('player:') then return end

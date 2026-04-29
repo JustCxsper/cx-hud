@@ -1,35 +1,35 @@
-return function(State, Utils, Minimap, Status, Vehicle, readyToRock, Config)
+return function(State, Utils, Minimap, Status, Vehicle, isReady, Config)
     RegisterCommand(Config.MenuCommand or 'hud', function()
-        if not readyToRock() then return end
+        if not isReady() then return end
         State.menuIsOpen = true
         SetNuiFocus(true, true)
-        Utils.yeet('openMenu', {})
+        Utils.sendNui('openMenu', {})
     end, false)
 
     RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-        Status.grabPlayerData()
-        State.diddlyLoaded = true
-        State.actuallySpawned = true
+        Status.fetchPlayerData()
+        State.coreLoaded    = true
+        State.playerSpawned = true
         CreateThread(function() Wait(1500); SetBigmapActive(false, false); Status.tryShowHud() end)
     end)
 
     RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
-        State.diddlyLoaded = false; State.actuallySpawned = false; State.buckledUp = false
+        State.coreLoaded = false; State.playerSpawned = false; State.seatbeltOn = false
         Status.showHud(false); DisplayRadar(false)
     end)
 
     AddEventHandler('playerSpawned', function()
-        State.actuallySpawned = true; Status.grabPlayerData()
+        State.playerSpawned = true; Status.fetchPlayerData()
         CreateThread(function() Wait(1500); SetBigmapActive(false, false); Status.tryShowHud() end)
     end)
 
     AddEventHandler('onResourceStart', function(res)
         if res ~= GetCurrentResourceName() then return end
-        Status.grabPlayerData()
+        Status.fetchPlayerData()
         if LocalPlayer.state.isLoggedIn then
-            State.diddlyLoaded = true
+            State.coreLoaded = true
             if NetworkIsPlayerActive(cache.playerId) and DoesEntityExist(cache.ped) then
-                State.actuallySpawned = true
+                State.playerSpawned = true
             end
             CreateThread(function() Wait(1000); SetBigmapActive(false, false); Status.tryShowHud() end)
         else
@@ -37,33 +37,33 @@ return function(State, Utils, Minimap, Status, Vehicle, readyToRock, Config)
         end
     end)
 
-    RegisterNetEvent('QBCore:Player:SetPlayerData', function(freshData)
-        State.whoAmI = freshData or {}
+    RegisterNetEvent('QBCore:Player:SetPlayerData', function(playerData)
+        State.playerData = playerData or {}
         Status.refreshStaticCache()
         if State.hudShowing then Status.pushStatus(true) end
     end)
 
     RegisterNetEvent('QBCore:Client:OnJobUpdate', function(job)
-        State.whoAmI.job = job
+        State.playerData.job = job
         Status.refreshStaticCache()
         if State.hudShowing then Status.pushStatus(false) end
     end)
 
     RegisterNetEvent('QBCore:Client:OnMoneyChange', function(moneyType, amount, operation)
-        State.whoAmI.money = State.whoAmI.money or {}
-        local current = State.whoAmI.money[moneyType] or 0
-        if     operation == 'add'    then State.whoAmI.money[moneyType] = current + amount
-        elseif operation == 'remove' then State.whoAmI.money[moneyType] = math.max(0, current - amount)
-        elseif operation == 'set'    then State.whoAmI.money[moneyType] = amount
+        State.playerData.money = State.playerData.money or {}
+        local current = State.playerData.money[moneyType] or 0
+        if     operation == 'add'    then State.playerData.money[moneyType] = current + amount
+        elseif operation == 'remove' then State.playerData.money[moneyType] = math.max(0, current - amount)
+        elseif operation == 'set'    then State.playerData.money[moneyType] = amount
         end
         Status.refreshMoneyCache()
         if State.hudShowing then Status.pushStatus(false) end
     end)
 
     RegisterNetEvent('hud:client:UpdateNeeds', function(hunger, thirst)
-        State.whoAmI.metadata        = State.whoAmI.metadata or {}
-        State.whoAmI.metadata.hunger = hunger
-        State.whoAmI.metadata.thirst = thirst
+        State.playerData.metadata        = State.playerData.metadata or {}
+        State.playerData.metadata.hunger = hunger
+        State.playerData.metadata.thirst = thirst
         if State.hudShowing then Status.pushStatus(false) end
     end)
 
@@ -74,6 +74,6 @@ return function(State, Utils, Minimap, Status, Vehicle, readyToRock, Config)
     end)
 
     RegisterNetEvent('cx-hud:versionResult', function(current, latest, outdated)
-        Utils.yeet('versionInfo', { current = current, latest = latest, outdated = outdated })
+        Utils.sendNui('versionInfo', { current = current, latest = latest, outdated = outdated })
     end)
 end

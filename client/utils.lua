@@ -1,9 +1,9 @@
 return function(Config)
-    local function yeet(action, payload)
+    local function sendNui(action, payload)
         SendNUIMessage({ action = action, data = payload })
     end
 
-    local function roundIt(n)
+    local function round(n)
         return math.floor((n or 0) + 0.5)
     end
 
@@ -20,7 +20,7 @@ return function(Config)
         end
     end
 
-    local function prettyMoney(n)
+    local function formatMoney(n)
         local s = tostring(math.floor(n or 0))
         while true do
             local result, count = s:gsub('^(%-?%d+)(%d%d%d)', '%1,%2')
@@ -30,7 +30,7 @@ return function(Config)
         return '$' .. s
     end
 
-    local function whereTheHellAmI(coords)
+    local function getStreetInfo(coords)
         local sh, ch  = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
         local rawZone = GetNameOfZone(coords.x, coords.y, coords.z)
         local street  = GetStreetNameFromHashKey(sh)
@@ -62,11 +62,11 @@ return function(Config)
     end
 
     return {
-        yeet             = yeet,
-        roundIt          = roundIt,
+        sendNui          = sendNui,
+        round            = round,
         headingToCompass = headingToCompass,
-        prettyMoney      = prettyMoney,
-        whereTheHellAmI  = whereTheHellAmI,
+        formatMoney      = formatMoney,
+        getStreetInfo    = getStreetInfo,
         waypointDistance = waypointDistance,
         getVehName       = getVehName,
     }

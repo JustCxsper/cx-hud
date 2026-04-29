@@ -1,14 +1,14 @@
-return function(State, Utils, Vehicle, Minimap, readyToRock, Config)
+return function(State, Utils, Vehicle, Minimap, isReady, Config)
     local cachedCash  = '$0'
     local cachedBank  = '$0'
     local lastCashRaw = -1
     local lastBankRaw = -1
 
     local function refreshMoneyCache()
-        local cash = (State.whoAmI.money and State.whoAmI.money.cash) or 0
-        local bank = (State.whoAmI.money and State.whoAmI.money.bank) or 0
-        if cash ~= lastCashRaw then lastCashRaw = cash; cachedCash = Utils.prettyMoney(cash) end
-        if bank ~= lastBankRaw then lastBankRaw = bank; cachedBank = Utils.prettyMoney(bank) end
+        local cash = (State.playerData.money and State.playerData.money.cash) or 0
+        local bank = (State.playerData.money and State.playerData.money.bank) or 0
+        if cash ~= lastCashRaw then lastCashRaw = cash; cachedCash = Utils.formatMoney(cash) end
+        if bank ~= lastBankRaw then lastBankRaw = bank; cachedBank = Utils.formatMoney(bank) end
     end
 
     local cachedJob   = 'Civilian'
@@ -17,15 +17,15 @@ return function(State, Utils, Vehicle, Minimap, readyToRock, Config)
 
     local function refreshStaticCache()
         refreshMoneyCache()
-        if State.whoAmI.job then
-            cachedJob   = State.whoAmI.job.label or State.whoAmI.job.name or 'Civilian'
-            local g     = State.whoAmI.job.grade
+        if State.playerData.job then
+            cachedJob   = State.playerData.job.label or State.playerData.job.name or 'Civilian'
+            local g     = State.playerData.job.grade
             cachedGrade = g and (g.name or tostring(g.level)) or 'Unemployed'
         else
             cachedJob = 'Civilian'; cachedGrade = 'Unemployed'
         end
-        if State.whoAmI.charinfo then
-            local full = ((State.whoAmI.charinfo.firstname or '') .. ' ' .. (State.whoAmI.charinfo.lastname or '')):match('^%s*(.-)%s*$')
+        if State.playerData.charinfo then
+            local full = ((State.playerData.charinfo.firstname or '') .. ' ' .. (State.playerData.charinfo.lastname or '')):match('^%s*(.-)%s*$')
             cachedName = full ~= '' and full or 'Player'
         else
             cachedName = 'Player'
@@ -43,25 +43,25 @@ return function(State, Utils, Vehicle, Minimap, readyToRock, Config)
         local coords  = GetEntityCoords(cache.ped)
         local heading = GetEntityHeading(cache.ped)
         if doSlow then
-            cachedStreet, cachedCross, cachedZone = Utils.whereTheHellAmI(coords)
+            cachedStreet, cachedCross, cachedZone = Utils.getStreetInfo(coords)
             cachedWaypoint = Utils.waypointDistance(coords)
         end
         local hp      = math.max(0, GetEntityHealth(cache.ped) - 100)
         local armour  = GetPedArmour(cache.ped)
-        local meta    = State.whoAmI.metadata or {}
-        local hunger  = Utils.roundIt(meta.hunger or 100)
-        local thirst  = Utils.roundIt(meta.thirst or 100)
-        local stress  = Utils.roundIt(LocalPlayer.state.stress or meta.stress or 0)
+        local meta    = State.playerData.metadata or {}
+        local hunger  = Utils.round(meta.hunger or 100)
+        local thirst  = Utils.round(meta.thirst or 100)
+        local stress  = Utils.round(LocalPlayer.state.stress or meta.stress or 0)
         local stamina = math.max(0, math.min(100, GetPlayerSprintStaminaRemaining(cache.playerId)))
 
         local status = {
-            health       = Utils.roundIt(hp),
-            armour       = Utils.roundIt(armour),
+            health       = Utils.round(hp),
+            armour       = Utils.round(armour),
             hunger       = hunger,
             thirst       = thirst,
             stress       = stress,
-            stamina      = Utils.roundIt(stamina),
-            talking      = State.mouthRunning,
+            stamina      = Utils.round(stamina),
+            talking      = State.isTalking,
             voice        = State.voiceLabel,
             cash         = cachedCash,
             bank         = cachedBank,
@@ -75,7 +75,7 @@ return function(State, Utils, Vehicle, Minimap, readyToRock, Config)
             job          = cachedJob,
             grade        = cachedGrade,
             inVehicle    = cache.vehicle ~= nil,
-            seatbelt     = State.buckledUp,
+            seatbelt     = State.seatbeltOn,
             showStress   = Config.ShowStress and stress >= Config.StressThreshold,
             showStamina  = (IsPedRunning(cache.ped) or IsPedSprinting(cache.ped)) and stamina < 99,
             waypointDist = cachedWaypoint,
@@ -92,7 +92,7 @@ return function(State, Utils, Vehicle, Minimap, readyToRock, Config)
         end
 
         if hasChanges then
-            Utils.yeet('updateStatus', delta)
+            Utils.sendNui('updateStatus', delta)
         end
     end
 
@@ -104,11 +104,11 @@ return function(State, Utils, Vehicle, Minimap, readyToRock, Config)
             local p = IsPauseMenuActive()
             if p ~= State.gameIsPaused then
                 State.gameIsPaused = p
-                Utils.yeet('setPaused', { paused = p })
+                Utils.sendNui('setPaused', { paused = p })
             end
-            if readyToRock() and not State.menuIsOpen and not State.gameIsPaused then
+            if isReady() and not State.menuIsOpen and not State.gameIsPaused then
                 local t = NetworkIsPlayerTalking(cache.playerId)
-                if t ~= State.mouthRunning then State.mouthRunning = t end
+                if t ~= State.isTalking then State.isTalking = t end
                 slowTick = (slowTick + 1) % SLOW_EVERY
                 pushStatus(slowTick == 0)
                 Vehicle.pushVehicle()
@@ -120,7 +120,7 @@ return function(State, Utils, Vehicle, Minimap, readyToRock, Config)
     end)
 
     local function pushConfig()
-        Utils.yeet('initConfig', {
+        Utils.sendNui('initConfig', {
             colors     = Config.Colors,
             defaults   = Config.DefaultVisible,
             logo       = Config.Logo,
@@ -137,21 +137,21 @@ return function(State, Utils, Vehicle, Minimap, readyToRock, Config)
 
     local function showHud(visible)
         State.hudShowing = visible
-        Utils.yeet('toggleHud', { visible = visible })
+        Utils.sendNui('toggleHud', { visible = visible })
     end
 
-    local function grabPlayerData()
+    local function fetchPlayerData()
         local ok, data = pcall(function() return exports['qbx_core']:GetPlayerData() end)
         if not ok or not data or not next(data) then
             Wait(500)
             ok, data = pcall(function() return exports['qbx_core']:GetPlayerData() end)
         end
-        State.whoAmI = (ok and data) or {}
+        State.playerData = (ok and data) or {}
         refreshStaticCache()
     end
 
     local function tryShowHud()
-        if not readyToRock() then return end
+        if not isReady() then return end
         Minimap.patchMinimap()
         pushConfig()
         showHud(true)
@@ -164,7 +164,7 @@ return function(State, Utils, Vehicle, Minimap, readyToRock, Config)
         pushStatus         = pushStatus,
         pushConfig         = pushConfig,
         showHud            = showHud,
-        grabPlayerData     = grabPlayerData,
+        fetchPlayerData    = fetchPlayerData,
         tryShowHud         = tryShowHud,
         refreshStaticCache = refreshStaticCache,
         refreshMoneyCache  = refreshMoneyCache,

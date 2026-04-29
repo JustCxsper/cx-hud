@@ -455,9 +455,9 @@ body {
   top: calc(var(--mm-top) + var(--mm-h) + 8px);
   width: var(--mm-w);
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  gap: 0;
+  gap: 6px;
 }
 
 .status-row.vertical {
@@ -475,7 +475,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity .35s ease, transform .35s ease;
+  transition: opacity .3s ease-out, transform .3s ease-out, width .3s ease-out, flex-basis .3s ease-out;
   border-radius: 50%;
 }
 
@@ -492,6 +492,11 @@ body {
   opacity: 0;
   transform: scale(0.65);
   pointer-events: none;
+  width: 0;
+  flex: 0 0 0;
+  overflow: hidden;
+  margin: 0 -3px;
+  padding: 0;
 }
 
 .status-pill.stress.visible,
@@ -499,6 +504,9 @@ body {
   opacity: 1;
   transform: scale(1);
   pointer-events: auto;
+  width: 39px;
+  flex: 0 0 39px;
+  overflow: visible;
 }
 
 .s-ring-svg {

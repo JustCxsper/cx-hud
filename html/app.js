@@ -1,21 +1,21 @@
-const theWholeHud   = document.getElementById('hud')
-const carCard       = document.getElementById('vehicleCard')
+const hudRoot   = document.getElementById('hud')
+const vehicleCard       = document.getElementById('vehicleCard')
 const weaponCard    = document.getElementById('weaponCard')
-const lightyBois    = document.getElementById('lightsPanel')
-const stressBubble  = document.getElementById('stressPill')
-const staminaBubble = document.getElementById('staminaPill')
-const goFastRing    = document.getElementById('speedRing')
+const lightsPanel    = document.getElementById('lightsPanel')
+const stressPill  = document.getElementById('stressPill')
+const staminaPill = document.getElementById('staminaPill')
+const speedRing    = document.getElementById('speedRing')
 const settingsMenu  = document.getElementById('hudMenu')
-const petrolArc     = document.getElementById('fuelArc')
-const motorArc      = document.getElementById('engineArc')
-const whereAmI      = document.getElementById('streetPill')
+const fuelArc     = document.getElementById('fuelArc')
+const engineArc      = document.getElementById('engineArc')
+const streetPill      = document.getElementById('streetPill')
 const wpWrap        = document.querySelector('.clock-waypoint-wrap')
 const clockChip     = document.getElementById('clockBadge')
 const wpChip        = document.getElementById('waypointChip')
 const wpDistLabel   = document.getElementById('waypointDist')
 const cineTop       = document.getElementById('cinebarTop')
 const cineBottom    = document.getElementById('cinebarBottom')
-const gearBadge     = document.getElementById('gearVal')
+const gearDisplay     = document.getElementById('gearVal')
 const redlineMarker = document.getElementById('redlineMarker')
 
 const voiceRingContainer = document.getElementById('comp-voice')
@@ -173,13 +173,13 @@ function applyVisibility() {
         const showTlCard = hudState.portrait || hudState.charname || hudState.playerid
         tlCard.classList.toggle('hidden', !showTlCard)
     }
-    if (whereAmI) whereAmI.classList.toggle('hidden', !hudState.minimap)
+    if (streetPill) streetPill.classList.toggle('hidden', !hudState.minimap)
     if (wpWrap) wpWrap.classList.toggle('hidden', !hudState.streetclock)
     if (clockChip) clockChip.classList.toggle('hidden', !hudState.streetclock)
     if (elStatusRow) {
         elStatusRow.classList.toggle('hidden', !(hudState.health || hudState.armor || hudState.hunger || hudState.thirst))
     }
-    carCard.classList.toggle('hidden', !hudState.vehicle)
+    vehicleCard.classList.toggle('hidden', !hudState.vehicle)
     cineTop.classList.toggle('hidden',    !hudState.cinebars)
     cineBottom.classList.toggle('hidden', !hudState.cinebars)
     if (weaponCard) {
@@ -316,11 +316,11 @@ const handlers = {
     },
 
     toggleHud(data) {
-        theWholeHud.classList.toggle('hidden', !data.visible)
+        hudRoot.classList.toggle('hidden', !data.visible)
     },
 
     setPaused(data) {
-        theWholeHud.style.visibility = data.paused ? 'hidden' : ''
+        hudRoot.style.visibility = data.paused ? 'hidden' : ''
     },
 
     openMenu() {
@@ -341,15 +341,17 @@ const handlers = {
         if (data.bank      !== undefined) elBank.textContent      = data.bank
         if (data.time      !== undefined) elClock.textContent     = data.time
         if (data.charName  !== undefined) elCharName.textContent  = data.charName
-        if (data.zone      !== undefined) elZone.textContent      = data.zone
+        if (data.zone      !== undefined) elStreet._lastZone     = data.zone
         if (data.direction !== undefined) elDirection.textContent = data.direction
 
-        if (data.street !== undefined || data.crossing !== undefined) {
+        if (data.street !== undefined || data.crossing !== undefined || data.zone !== undefined) {
             if (data.street   !== undefined) elStreet._lastStreet   = data.street
             if (data.crossing !== undefined) elStreet._lastCrossing = data.crossing
             const s = elStreet._lastStreet   || ''
             const c = elStreet._lastCrossing || ''
-            elStreet.textContent = c.length ? s + ' / ' + c : s
+            const z = elStreet._lastZone     || ''
+            elStreet.textContent = s
+            elZone.textContent   = c.length ? c + '  ·  ' + z : z
         }
 
         if (data.health  !== undefined) setRing(elHealthBar,  data.health)
@@ -363,8 +365,8 @@ const handlers = {
             if (voiceRingContainer) voiceRingContainer.classList.toggle('talking', !!data.talking)
         }
 
-        if (data.showStress  !== undefined) stressBubble.classList.toggle('visible',  !!data.showStress)
-        if (data.showStamina !== undefined) staminaBubble.classList.toggle('visible', !!data.showStamina)
+        if (data.showStress  !== undefined) stressPill.classList.toggle('visible',  !!data.showStress)
+        if (data.showStamina !== undefined) staminaPill.classList.toggle('visible', !!data.showStamina)
 
         if (data.waypointDist !== undefined) updateWaypointChip(data.waypointDist || null)
 
@@ -376,23 +378,23 @@ const handlers = {
 
     updateVehicle(data) {
         if (!hudState.vehicle) {
-            carCard.classList.add('hidden')
-            lightyBois.classList.add('hidden')
+            vehicleCard.classList.add('hidden')
+            lightsPanel.classList.add('hidden')
             return
         }
-        carCard.classList.toggle('hidden', !data.show)
-        lightyBois.classList.toggle('hidden', !(hudState.lights && data.show))
+        vehicleCard.classList.toggle('hidden', !data.show)
+        lightsPanel.classList.toggle('hidden', !(hudState.lights && data.show))
         if (!data.show) return
 
         elSpeedVal.textContent  = data.speed
         elSpeedUnit.textContent = data.unit
-        gearBadge.textContent   = data.gear
+        gearDisplay.textContent   = data.gear
         elRpmVal.textContent    = rpmDisplay(data.rpm)
         if (data.vehName) elVehName.textContent = data.vehName
 
         updateSpeedRing(data.speed)
-        setSideArc(petrolArc, elFuelPct,   data.fuel)
-        setSideArc(motorArc,  elEnginePct, data.engine)
+        setSideArc(fuelArc, elFuelPct,   data.fuel)
+        setSideArc(engineArc,  elEnginePct, data.engine)
         handleGearChange(data.gear)
         applyRedlineFlash(data.rpm)
 
@@ -403,8 +405,8 @@ const handlers = {
         }
 
         const vt = window.__cxThresh || { fuel: 10, engine: 20 }
-        setArcWarn(petrolArc, data.fuel,   vt.fuel)
-        setArcWarn(motorArc,  data.engine, vt.engine)
+        setArcWarn(fuelArc, data.fuel,   vt.fuel)
+        setArcWarn(engineArc,  data.engine, vt.engine)
 
         if (data.lights) refreshLights(data.lights)
     },
@@ -483,8 +485,8 @@ const handlers = {
 window.addEventListener('message', ev => {
     const { action, data } = ev.data ?? {}
     handlers[action]?.(data)
-    if (action === 'hideHud') theWholeHud.classList.add('inventory-hidden')
-    if (action === 'showHud') theWholeHud.classList.remove('inventory-hidden')
+    if (action === 'hideHud') hudRoot.classList.add('inventory-hidden')
+    if (action === 'showHud') hudRoot.classList.remove('inventory-hidden')
 })
 
 initRings()

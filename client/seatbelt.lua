@@ -1,6 +1,6 @@
 return function(State, Utils, Config)
-    local BELT_KEY       = Config.SeatbeltKey or 29
-    local beltEnabled    = Config.EnableSeatbelt ~= false
+    local BELT_KEY    = Config.SeatbeltKey or 29
+    local beltEnabled = Config.EnableSeatbelt ~= false
 
     CreateThread(function()
         while true do
@@ -9,21 +9,21 @@ return function(State, Utils, Config)
                 local veh      = cache.vehicle
                 local isDriver = cache.seat == -1
 
-                if not beltEnabled and State.buckledUp then
-                    State.buckledUp = false
+                if not beltEnabled and State.seatbeltOn then
+                    State.seatbeltOn = false
                 end
 
                 if beltEnabled and IsControlJustPressed(0, BELT_KEY) then
-                    State.buckledUp = not State.buckledUp
+                    State.seatbeltOn = not State.seatbeltOn
                     lib.notify({
                         title       = 'Seatbelt',
-                        description = State.buckledUp and 'Seatbelt fastened' or 'Seatbelt removed',
-                        type        = State.buckledUp and 'success' or 'error',
+                        description = State.seatbeltOn and 'Seatbelt fastened' or 'Seatbelt removed',
+                        type        = State.seatbeltOn and 'success' or 'error',
                         duration    = 2000,
                     })
                 end
 
-                if beltEnabled and State.buckledUp then
+                if beltEnabled and State.seatbeltOn then
                     DisableControlAction(0, 75, true)
                     if IsDisabledControlJustPressed(0, 75) then
                         lib.notify({ title = 'Seatbelt', description = 'Remove your seatbelt first', type = 'error' })
@@ -52,7 +52,7 @@ return function(State, Utils, Config)
                     end
                 end
 
-                if beltEnabled and Config.SeatbeltEject and not State.buckledUp and not State.ejected then
+                if beltEnabled and Config.SeatbeltEject and not State.seatbeltOn and not State.ejected then
                     local kmh = GetEntitySpeed(veh) * 3.6
                     if kmh > Config.SeatbeltEjectSpeed and GetVehicleBodyHealth(veh) < Config.SeatbeltBodyThresh then
                         local fwd = GetEntityForwardVector(veh)
@@ -66,7 +66,7 @@ return function(State, Utils, Config)
 
                 Wait(16)
             else
-                if State.buckledUp then State.buckledUp = false end
+                if State.seatbeltOn then State.seatbeltOn = false end
                 State.ejected = false
                 Wait(300)
             end
@@ -74,6 +74,6 @@ return function(State, Utils, Config)
     end)
 
     exports('SetSeatbelt', function(state)
-        State.buckledUp = beltEnabled and state == true or false
+        State.seatbeltOn = beltEnabled and state == true or false
     end)
 end

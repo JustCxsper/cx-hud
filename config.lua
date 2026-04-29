@@ -1,5 +1,5 @@
 Config = {}
-Config.Version = "1.1.4" --Don't change this, it is used for version checking and update notifications.
+Config.Version = "1.1.5" -- Don't change this, it is used for version checking and update notifications.
 
 Config.DefaultVoice        = 'Normal'
 Config.ShowStress          = true
@@ -7,23 +7,23 @@ Config.StressThreshold     = 5
 Config.UpdateInterval      = 100
 Config.MenuCommand         = 'hud'
 
---redline threshold
+-- Redline threshold (percentage)
 Config.RedlineThreshold = 85
 
---seatbelt shite
+-- Seatbelt settings
 Config.EnableSeatbelt    = true -- do u even want to use our seatbelt? if not set it to false 
 Config.SeatbeltEject      = true
 Config.SeatbeltEjectSpeed = 60.0
 Config.SeatbeltBodyThresh = 500.0
 Config.SeatbeltKey        = 29
 
--- Warning thresholds 
+-- Warning thresholds
 Config.WarnHealth  = 20
 Config.WarnHunger  = 15
 Config.WarnThirst  = 15
 Config.WarnFuel    = 10
 Config.WarnEngine  = 20
-Config.WarnAmmoClip = 5 -- when should the ammo counter go red and warn peeps that theyre running outta ammo
+Config.WarnAmmoClip = 5 -- ammo clip count below which the counter turns red
 
 Config.Logo = {
     url            = 'https://cdn.discordapp.com/attachments/1492598634821452121/1493684431263764691/cxsperdev-logo.png?ex=69dfdd87&is=69de8c07&hm=8b71b93ff9fc75cd598bcfbecc71447a319b6909af27949ca84ab2ddd47cb7ed&',
@@ -32,8 +32,7 @@ Config.Logo = {
     transparentBg  = true,
 }
 
-
--- used for weapon item images only (Don't touch unless you know what you're doing)
+-- Weapon item images (don't touch unless you know what you're doing)
 Config.InventoryImages = {
     autoDetect = true,
     inventories = {
@@ -44,7 +43,7 @@ Config.InventoryImages = {
     }
 }
 
---Default components for new players.
+-- Default component visibility for new players
 Config.DefaultVisible = {
     portrait    = true,
     charname    = true,
@@ -52,7 +51,7 @@ Config.DefaultVisible = {
     playerid    = true,
     job         = true,
     cash        = true,
-    bank        = false, -- disable bank from showing by default
+    bank        = false,
     minimap     = true,
     streetclock = true,
     health      = true,
@@ -66,7 +65,7 @@ Config.DefaultVisible = {
     weapon      = true,
 }
 
--- Set a key to false to lock it server-side (players cannot turn it off).
+-- Set a key to false to lock it server-side (players cannot toggle it via /hud).
 -- Keys must match those in Config.DefaultVisible above.
 Config.MenuOptions = {
     portrait    = true,
@@ -75,7 +74,7 @@ Config.MenuOptions = {
     playerid    = true,
     job         = true,
     cash        = true,
-    bank        = false, -- Lock Bank from being enabled in /hud 
+    bank        = false,
     minimap     = true,
     streetclock = true,
     health      = true,
@@ -89,7 +88,7 @@ Config.MenuOptions = {
     weapon      = true,
 }
 
---ui colours, injects into the css yeehaw
+-- UI colours, injected into CSS as custom properties
 Config.Colors = {
     panel          = 'rgba(6, 9, 16, 0.88)',
     panel2         = 'rgba(10, 15, 24, 0.94)',

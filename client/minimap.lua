@@ -1,10 +1,10 @@
-return function(State, Utils, readyToRock, Config)
+return function(State, Utils, isReady, Config)
     local squaremapLoaded = false
     local mapPatched      = false
     local mmOffsetX       = 0.0
     local mmOffsetY       = 0.0
 
-    local function grabSquaremap()
+    local function loadSquaremap()
         if squaremapLoaded then return true end
         RequestStreamedTextureDict('squaremap', false)
         local waited = 0
@@ -19,7 +19,7 @@ return function(State, Utils, readyToRock, Config)
         return true
     end
 
-    local function killBigmap()
+    local function suppressBigmap()
         CreateThread(function()
             local t = 0
             while t < 10000 do SetBigmapActive(false, false); t = t + 1000; Wait(1000) end
@@ -75,7 +75,7 @@ return function(State, Utils, readyToRock, Config)
 
     local function patchMinimap()
         if mapPatched then return end
-        if not grabSquaremap() then return end
+        if not loadSquaremap() then return end
 
         local resX, resY = GetActiveScreenResolution()
         local aspect     = resX / resY
@@ -83,9 +83,9 @@ return function(State, Utils, readyToRock, Config)
         applyComponentPositions(aspect)
         SetBlipAlpha(GetNorthRadarBlip(), 0)
         SetBigmapActive(true, false); Wait(0); SetBigmapActive(false, false)
-        killBigmap()
+        suppressBigmap()
         mapPatched = true
-        Utils.yeet('setMinimapGeo', calculateMinimapGeo())
+        Utils.sendNui('setMinimapGeo', calculateMinimapGeo())
     end
 
     local function repositionMinimap(px, py)
@@ -95,7 +95,7 @@ return function(State, Utils, readyToRock, Config)
         mmOffsetY = py
         applyComponentPositions(aspect)
         SetBigmapActive(true, false); Wait(0); SetBigmapActive(false, false)
-        Utils.yeet('setMinimapGeo', calculateMinimapGeo())
+        Utils.sendNui('setMinimapGeo', calculateMinimapGeo())
     end
 
     local lastSafezone = GetSafeZoneSize()
@@ -130,7 +130,7 @@ return function(State, Utils, readyToRock, Config)
     CreateThread(function()
         while true do
             Wait(500)
-            local canShow = readyToRock()
+            local canShow = isReady()
             local inCar   = canShow and cache.vehicle ~= nil or false
             local show    = canShow and hudVisible and minimapVisible and inCar
             if canShow ~= lastCanShow or inCar ~= lastInCar or show ~= lastShow then

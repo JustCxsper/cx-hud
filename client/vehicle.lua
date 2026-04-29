@@ -1,7 +1,7 @@
 return function(State, Utils, Config)
     local function pushVehicle()
         if not cache.vehicle then
-            Utils.yeet('updateVehicle', { show = false })
+            Utils.sendNui('updateVehicle', { show = false })
             return
         end
         local veh    = cache.vehicle
@@ -9,15 +9,15 @@ return function(State, Utils, Config)
         local speed  = Config.SpeedUnit == 'KMH' and rawSpd * 3.6 or rawSpd * 2.236936
         local gear   = GetVehicleCurrentGear(veh)
         local rpm    = math.floor((GetVehicleCurrentRpm(veh) or 0) * 100)
-        Utils.yeet('updateVehicle', {
+        Utils.sendNui('updateVehicle', {
             show     = true,
-            speed    = Utils.roundIt(speed),
+            speed    = Utils.round(speed),
             unit     = Config.SpeedUnit,
-            fuel     = Utils.roundIt(GetVehicleFuelLevel(veh)),
+            fuel     = Utils.round(GetVehicleFuelLevel(veh)),
             rpm      = rpm,
             gear     = gear == 0 and 'R' or tostring(gear),
-            engine   = math.max(0, math.min(100, Utils.roundIt(GetVehicleEngineHealth(veh) / 10))),
-            seatbelt = Config.EnableSeatbelt ~= false and State.buckledUp or false,
+            engine   = math.max(0, math.min(100, Utils.round(GetVehicleEngineHealth(veh) / 10))),
+            seatbelt = Config.EnableSeatbelt ~= false and State.seatbeltOn or false,
             vehName  = Utils.getVehName(veh),
             lights   = {
                 headlights     = State.lastLights.headlights,
