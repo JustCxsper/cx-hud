@@ -66,6 +66,7 @@ return function(State, Utils, readyToRock, Config)
             end
             if prevWeapon.show ~= false then
                 prevWeapon = { show = false }
+                lastAmmoByWeapon = {}
                 Utils.yeet('updateWeapon', { show = false })
             end
             return

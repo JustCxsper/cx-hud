@@ -10,8 +10,7 @@ return function(State, Utils, Minimap, Status, Vehicle, readyToRock, Config)
         Status.grabPlayerData()
         State.diddlyLoaded = true
         State.actuallySpawned = true
-        Wait(1500)
-        Status.tryShowHud()
+        CreateThread(function() Wait(1500); SetBigmapActive(false, false); Status.tryShowHud() end)
     end)
 
     RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
@@ -21,7 +20,7 @@ return function(State, Utils, Minimap, Status, Vehicle, readyToRock, Config)
 
     AddEventHandler('playerSpawned', function()
         State.actuallySpawned = true; Status.grabPlayerData()
-        Wait(1500); Status.tryShowHud()
+        CreateThread(function() Wait(1500); SetBigmapActive(false, false); Status.tryShowHud() end)
     end)
 
     AddEventHandler('onResourceStart', function(res)
@@ -32,7 +31,7 @@ return function(State, Utils, Minimap, Status, Vehicle, readyToRock, Config)
             if NetworkIsPlayerActive(cache.playerId) and DoesEntityExist(cache.ped) then
                 State.actuallySpawned = true
             end
-            Wait(1000); Status.tryShowHud()
+            CreateThread(function() Wait(1000); SetBigmapActive(false, false); Status.tryShowHud() end)
         else
             Status.showHud(false)
         end

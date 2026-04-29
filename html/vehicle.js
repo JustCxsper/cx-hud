@@ -86,11 +86,11 @@ function buildDialTicks() {
 function refreshLights(data) {
     if (!data) return
     const hz = !!data.hazard
-    flipLight(elLightLeft,  hz || !!data.indicatorLeft)
-    flipLight(elLightRight, hz || !!data.indicatorRight)
-    flipLight(elLightHaz,   hz)
-    flipLight(elLightHead,  !!data.headlights)
-    flipLight(elLightHigh,  !!data.highbeam)
+    flipLight(document.getElementById('lightIndicatorLeft'),  hz || !!data.indicatorLeft)
+    flipLight(document.getElementById('lightIndicatorRight'), hz || !!data.indicatorRight)
+    flipLight(document.getElementById('lightHazard'),         hz)
+    flipLight(document.getElementById('lightHeadlights'),     !!data.headlights)
+    flipLight(document.getElementById('lightHighbeam'),       !!data.highbeam)
 }
 
 function flipLight(el, on) {

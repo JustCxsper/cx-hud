@@ -154,6 +154,6 @@ return function(State, Utils, readyToRock, Config)
         calculateMinimapGeo = calculateMinimapGeo,
         repositionMinimap   = repositionMinimap,
         setVisible          = function(v) minimapVisible = v end,
-        setHudVisible       = function(v) hudVisible = v end,
+        setHudVisible       = function(v) hudVisible = v; if not v then mapPatched = false end end,
     }
 end

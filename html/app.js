@@ -54,7 +54,7 @@ const elLightHaz   = document.getElementById('lightHazard')
 const elLightHead  = document.getElementById('lightHeadlights')
 const elLightHigh  = document.getElementById('lightHighbeam')
 
-const SAVE_KEY   = 'cx_hud_state_v1'
+const SAVE_KEY   = 'cx_hud_state_v2'
 const SPEED_KEY  = 'cx_hud_speed_v1'
 const AVATAR_KEY = 'cx_hud_avatar_v1'
 
@@ -291,12 +291,12 @@ const elWeaponMeleeLabel = document.getElementById('weaponMeleeLabel')
 const handlers = {
     initConfig(data) {
         if (data?.colors)     injectColors(data.colors)
-        if (data?.defaults)   applyConfigDefaults(data.defaults)
         if (data?.thresholds) window.__cxThresh = data.thresholds
         if (data?.redline)    { redlineRpm = data.redline; buildRedlineMarker(redlineRpm) }
         if (data?.logo)       applyLogo(data.logo)
         if (data?.menuOptions) window.__menuOptions = data.menuOptions
         applyMinimapGeo(data?.minimapGeo)
+        if (data?.defaults)   applyConfigDefaults(data.defaults)
         bootHudState()
         const savedUnit = loadSpeedUnit()
         if (savedUnit) nuiPost('setSpeedUnit', { unit: savedUnit })

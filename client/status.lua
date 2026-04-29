@@ -142,6 +142,10 @@ return function(State, Utils, Vehicle, Minimap, readyToRock, Config)
 
     local function grabPlayerData()
         local ok, data = pcall(function() return exports['qbx_core']:GetPlayerData() end)
+        if not ok or not data or not next(data) then
+            Wait(500)
+            ok, data = pcall(function() return exports['qbx_core']:GetPlayerData() end)
+        end
         State.whoAmI = (ok and data) or {}
         refreshStaticCache()
     end

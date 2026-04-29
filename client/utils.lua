@@ -41,7 +41,7 @@ return function(Config)
 
     local function waypointDistance(coords)
         local wp = GetFirstBlipInfoId(8)
-        if not DoesBlipExist(wp) then return nil end
+        if not DoesBlipExist(wp) then return false end
         local wc = GetBlipInfoIdCoord(wp)
         local dx = coords.x - wc.x
         local dy = coords.y - wc.y

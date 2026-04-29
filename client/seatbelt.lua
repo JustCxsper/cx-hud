@@ -64,7 +64,7 @@ return function(State, Utils, Config)
                     end
                 end
 
-                Wait(0)
+                Wait(16)
             else
                 if State.buckledUp then State.buckledUp = false end
                 State.ejected = false
