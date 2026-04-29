@@ -2,9 +2,14 @@
 
 # cx-hud
 A modern, highly customizable, and lightweight HUD for **Qbox** and **QBCore** FiveM servers.
+# HUD
 ![HUD Preview v1.1.5](https://cxsper.dev/assets/cx-hud/images/ui.png)
 # UI Editor
 ![Editor Preview v1.1.5](https://cxsper.dev/assets/cx-hud/images/editor.png)
+# Vehicle HUD
+![In Car Preview v1.1.5](https://cxsper.dev/assets/cx-hud/images/vehicle-hud.png)
+# Settings UI
+![Settings Preview v1.1.5](https://cxsper.dev/assets/cx-hud/images/settings.png)
 
 
 ## Features
@@ -93,7 +98,3 @@ Thanks to everyone who has helped make this happen, even if it's small or big. E
 
 ## Notes
 * **Qbox Stress:** If your stress ring sits at 0 and doesn't move when shooting, remember that HUDs only *display* data. You must install a stress system like `jg-stress-addon` to actually do le stress magic!
-
-## More Pics
-![In Car Preview v1.1.5](https://cxsper.dev/assets/cx-hud/images/vehicle-hud.png)
-![Settings Preview v1.1.5](https://cxsper.dev/assets/cx-hud/images/settings.png)
