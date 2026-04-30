@@ -80,6 +80,19 @@ function nuiPost(endpoint, body) {
     }).catch(() => {})
 }
 
+
+function sendNuiViewport() {
+    nuiPost('nuiViewport', {
+        width: window.innerWidth || 1920,
+        height: window.innerHeight || 1080,
+    })
+}
+
+window.addEventListener('resize', sendNuiViewport)
+setTimeout(sendNuiViewport, 100)
+setTimeout(sendNuiViewport, 500)
+setTimeout(sendNuiViewport, 2000)
+
 function applyMinimapGeo(geo) {
     if (!geo) return
     const root = document.documentElement.style

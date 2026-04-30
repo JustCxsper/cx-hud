@@ -439,14 +439,11 @@ body {
 .minimap-border-ring {
   position: absolute;
   inset: -3px;
-  width: 103%;
-  height: 103%;
-  border-radius: 12px;
+  border-radius: 10px;
   border: 0.35rem solid rgba(0, 6, 22, 0.88);
   box-shadow: 0 0 20px rgba(1, 12, 40, 0.50), 0 0 15px rgba(1, 12, 40, 0.50);
   pointer-events: none;
   z-index: 11;
-  left: -5px;
 }
 
 .status-row {

@@ -1,6 +1,32 @@
 return function(Config)
+    local function sanitizeForNui(value, seen)
+        local t = type(value)
+        if t == 'function' or t == 'thread' or t == 'userdata' then
+            return nil
+        end
+        if t ~= 'table' then
+            return value
+        end
+
+        seen = seen or {}
+        if seen[value] then return nil end
+        seen[value] = true
+
+        local out = {}
+        for k, v in pairs(value) do
+            local cleanKey = sanitizeForNui(k, seen)
+            local cleanVal = sanitizeForNui(v, seen)
+            if cleanKey ~= nil and cleanVal ~= nil then
+                out[cleanKey] = cleanVal
+            end
+        end
+
+        seen[value] = nil
+        return out
+    end
+
     local function sendNui(action, payload)
-        SendNUIMessage({ action = action, data = payload })
+        SendNUIMessage({ action = action, data = sanitizeForNui(payload or {}) })
     end
 
     local function round(n)

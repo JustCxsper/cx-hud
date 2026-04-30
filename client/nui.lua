@@ -30,4 +30,11 @@ return function(State, Utils, Minimap, Status, Vehicle, Config)
         if data.unit == 'KMH' or data.unit == 'MPH' then Config.SpeedUnit = data.unit end
         cb('ok')
     end)
+
+    RegisterNuiCallback('nuiViewport', function(data, cb)
+        if data and Minimap and Minimap.setNuiViewport then
+            Minimap.setNuiViewport(data.width, data.height)
+        end
+        cb('ok')
+    end)
 end

@@ -3,6 +3,8 @@ return function(State, Utils, isReady, Config)
     local mapPatched      = false
     local mmOffsetX       = 0.0
     local mmOffsetY       = 0.0
+    local nuiWidth        = 1920
+    local nuiHeight       = 1080
 
     local function loadSquaremap()
         if squaremapLoaded then return true end
@@ -26,12 +28,36 @@ return function(State, Utils, isReady, Config)
         end)
     end
 
+    local function getBaseOffset()
+        local aspectRatio = GetAspectRatio(false)
+        if aspectRatio > (1920 / 1080) then
+            return ((1920 / 1080 - aspectRatio) / 3.6) - 0.008, aspectRatio
+        end
+        return 0.0, aspectRatio
+    end
+
+    local function scaleGeoToNui(geo)
+        local resX, resY = GetActiveScreenResolution()
+        if not resX or not resY or resX <= 0 or resY <= 0 then return geo end
+
+        local sx = (nuiWidth or resX) / resX
+        local sy = (nuiHeight or resY) / resY
+
+        geo.left   = geo.left * sx
+        geo.top    = geo.top * sy
+        geo.width  = geo.width * sx
+        geo.height = geo.height * sy
+        geo.insetX = geo.insetX * sx
+        geo.insetY = geo.insetY * sy
+        return geo
+    end
+
     --- couldn't do it myself so ported it from minimal-hud, https://github.com/ThatMadCap/minimal-hud
     local function calculateMinimapGeo()
         SetBigmapActive(false, false)
 
         local resX, resY  = GetActiveScreenResolution()
-        local aspectRatio = GetAspectRatio(false)
+        local baseOffset, aspectRatio = getBaseOffset()
         local minimapRawX, minimapRawY
 
         SetScriptGfxAlign(string.byte('L'), string.byte('B'))
@@ -46,26 +72,21 @@ return function(State, Utils, isReady, Config)
         local szX, szY = GetScriptGfxPosition(0.0, 0.0)
         ResetScriptGfxAlign()
 
-        return {
-            left   = minimapRawX * resX + mmOffsetX,
+        return scaleGeoToNui({
+            left   = (minimapRawX + baseOffset) * resX + mmOffsetX,
             top    = minimapRawY * resY + mmOffsetY,
             width  = width,
             height = height,
             insetX = math.floor(szX * resX + 0.5),
             insetY = math.floor(szY * resY + 0.5),
-        }
+        })
     end
 
-    local function applyComponentPositions(aspect)
+    local function applyComponentPositions()
         local resX, resY = GetActiveScreenResolution()
-
         local normX = mmOffsetX / resX
         local normY = mmOffsetY / resY
-
-        local baseOffset = 0.0
-        if aspect > (1920 / 1080) then
-            baseOffset = ((1920 / 1080 - aspect) / 3.6) - 0.008
-        end
+        local baseOffset = getBaseOffset()
 
         SetMinimapClipType(0)
         SetMinimapComponentPosition('minimap',      'L', 'B',  0.0  + baseOffset + normX, -0.047 + normY, 0.1638, 0.183)
@@ -77,10 +98,7 @@ return function(State, Utils, isReady, Config)
         if mapPatched then return end
         if not loadSquaremap() then return end
 
-        local resX, resY = GetActiveScreenResolution()
-        local aspect     = resX / resY
-
-        applyComponentPositions(aspect)
+        applyComponentPositions()
         SetBlipAlpha(GetNorthRadarBlip(), 0)
         SetBigmapActive(true, false); Wait(0); SetBigmapActive(false, false)
         suppressBigmap()
@@ -89,11 +107,9 @@ return function(State, Utils, isReady, Config)
     end
 
     local function repositionMinimap(px, py)
-        local resX, resY = GetActiveScreenResolution()
-        local aspect     = resX / resY
         mmOffsetX = px
         mmOffsetY = py
-        applyComponentPositions(aspect)
+        applyComponentPositions()
         SetBigmapActive(true, false); Wait(0); SetBigmapActive(false, false)
         Utils.sendNui('setMinimapGeo', calculateMinimapGeo())
     end
@@ -149,10 +165,26 @@ return function(State, Utils, isReady, Config)
         end
     end)
 
+    local function setNuiViewport(w, h)
+        w = tonumber(w)
+        h = tonumber(h)
+        if not w or not h or w <= 0 or h <= 0 then return end
+
+        if math.abs(w - nuiWidth) < 1 and math.abs(h - nuiHeight) < 1 then return end
+
+        nuiWidth = w
+        nuiHeight = h
+
+        if mapPatched then
+            Utils.sendNui('setMinimapGeo', calculateMinimapGeo())
+        end
+    end
+
     return {
         patchMinimap        = patchMinimap,
         calculateMinimapGeo = calculateMinimapGeo,
         repositionMinimap   = repositionMinimap,
+        setNuiViewport      = setNuiViewport,
         setVisible          = function(v) minimapVisible = v end,
         setHudVisible       = function(v) hudVisible = v; if not v then mapPatched = false end end,
     }
