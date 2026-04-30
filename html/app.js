@@ -65,7 +65,8 @@ const RES_NAME = typeof window.GetParentResourceName === 'function'
 const hudState = {
     portrait: true, charname: true, voice: true, playerid: false,
     logo: true, job: true, cash: true, bank: true,
-    minimap: true, streetclock: true, health: true, armor: true, hunger: true, thirst: true,
+    minimap: true, minimapBorder: true, streetPill: true, streetclock: true, statusRow: true,
+    health: true, armor: true, hunger: true, thirst: true,
     vehicle: true, lights: true, cinebars: false, weapon: true,
 }
 
@@ -186,11 +187,11 @@ function applyVisibility() {
         const showTlCard = hudState.portrait || hudState.charname || hudState.playerid
         tlCard.classList.toggle('hidden', !showTlCard)
     }
-    if (streetPill) streetPill.classList.toggle('hidden', !hudState.minimap)
+    if (streetPill) streetPill.classList.toggle('hidden', !hudState.streetPill)
     if (wpWrap) wpWrap.classList.toggle('hidden', !hudState.streetclock)
     if (clockChip) clockChip.classList.toggle('hidden', !hudState.streetclock)
     if (elStatusRow) {
-        elStatusRow.classList.toggle('hidden', !(hudState.health || hudState.armor || hudState.hunger || hudState.thirst))
+        elStatusRow.classList.toggle('hidden', !(hudState.statusRow && (hudState.health || hudState.armor || hudState.hunger || hudState.thirst)))
     }
     vehicleCard.classList.toggle('hidden', !hudState.vehicle)
     cineTop.classList.toggle('hidden',    !hudState.cinebars)
@@ -200,7 +201,7 @@ function applyVisibility() {
         if (!hudState.weapon) weaponCard.classList.remove('weapon-visible')
     }
     const borderRing = document.querySelector('.minimap-border-ring')
-    if (borderRing) borderRing.classList.toggle('hidden', !hudState.minimap)
+    if (borderRing) borderRing.classList.toggle('hidden', !(hudState.minimap && hudState.minimapBorder))
 }
 
 function applyLockedOptions() {
