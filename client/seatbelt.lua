@@ -2,12 +2,82 @@ return function(State, Utils, Config)
     local BELT_KEY    = Config.SeatbeltKey or 29
     local beltEnabled = Config.EnableSeatbelt ~= false
 
+    -- Indicator input used to live in the frame loop with DisableControlAction +
+    -- IsDisabledControlJustPressed on controls 174/175/173. Those controls can be
+    -- unreliable while steering because GTA/FiveM is already consuming vehicle
+    -- input that frame. Key mappings fire as commands instead, so they do not get
+    -- missed when the player is holding A/D or a controller stick to turn.
+    local lastIndicatorPress = 0
+    local INDICATOR_DEBOUNCE = 175
+
+    local function canUseIndicators()
+        return cache.vehicle and cache.seat == -1 and not IsPauseMenuActive()
+    end
+
+    local function playIndicatorClick()
+        PlaySoundFrontend(-1, 'NAV_UP_DOWN', 'HUD_FRONTEND_DEFAULT_SOUNDSET', false)
+    end
+
+    local function toggleLeftIndicator()
+        if not canUseIndicators() then return end
+
+        local now = GetGameTimer()
+        if now - lastIndicatorPress < INDICATOR_DEBOUNCE then return end
+        lastIndicatorPress = now
+
+        local veh = cache.vehicle
+        local ind = GetVehicleIndicatorLights(veh)
+        local enable = ind ~= 1
+
+        SetVehicleIndicatorLights(veh, 1, enable)
+        SetVehicleIndicatorLights(veh, 0, false)
+        playIndicatorClick()
+    end
+
+    local function toggleRightIndicator()
+        if not canUseIndicators() then return end
+
+        local now = GetGameTimer()
+        if now - lastIndicatorPress < INDICATOR_DEBOUNCE then return end
+        lastIndicatorPress = now
+
+        local veh = cache.vehicle
+        local ind = GetVehicleIndicatorLights(veh)
+        local enable = ind ~= 2
+
+        SetVehicleIndicatorLights(veh, 0, enable)
+        SetVehicleIndicatorLights(veh, 1, false)
+        playIndicatorClick()
+    end
+
+    local function toggleHazards()
+        if not canUseIndicators() then return end
+
+        local now = GetGameTimer()
+        if now - lastIndicatorPress < INDICATOR_DEBOUNCE then return end
+        lastIndicatorPress = now
+
+        local veh = cache.vehicle
+        local enable = GetVehicleIndicatorLights(veh) ~= 3
+
+        SetVehicleIndicatorLights(veh, 0, enable)
+        SetVehicleIndicatorLights(veh, 1, enable)
+        playIndicatorClick()
+    end
+
+    RegisterCommand('cxhud_indicator_left', toggleLeftIndicator, false)
+    RegisterCommand('cxhud_indicator_right', toggleRightIndicator, false)
+    RegisterCommand('cxhud_hazards', toggleHazards, false)
+
+    RegisterKeyMapping('cxhud_indicator_left', 'Vehicle indicator: left', 'keyboard', 'LEFT')
+    RegisterKeyMapping('cxhud_indicator_right', 'Vehicle indicator: right', 'keyboard', 'RIGHT')
+    RegisterKeyMapping('cxhud_hazards', 'Vehicle hazards', 'keyboard', 'DOWN')
+
     CreateThread(function()
         while true do
             if cache.vehicle then
                 State.ejected = false
-                local veh      = cache.vehicle
-                local isDriver = cache.seat == -1
+                local veh = cache.vehicle
 
                 if not beltEnabled and State.seatbeltOn then
                     State.seatbeltOn = false
@@ -27,28 +97,6 @@ return function(State, Utils, Config)
                     DisableControlAction(0, 75, true)
                     if IsDisabledControlJustPressed(0, 75) then
                         lib.notify({ title = 'Seatbelt', description = 'Remove your seatbelt first', type = 'error' })
-                    end
-                end
-
-                if isDriver then
-                    DisableControlAction(0, 174, true)
-                    DisableControlAction(0, 175, true)
-                    DisableControlAction(0, 173, true)
-                    if IsDisabledControlJustPressed(0, 174) then
-                        SetVehicleIndicatorLights(veh, 1, GetVehicleIndicatorLights(veh) ~= 1)
-                        SetVehicleIndicatorLights(veh, 0, false)
-                        PlaySoundFrontend(-1, 'NAV_UP_DOWN', 'HUD_FRONTEND_DEFAULT_SOUNDSET', false)
-                    end
-                    if IsDisabledControlJustPressed(0, 175) then
-                        SetVehicleIndicatorLights(veh, 0, GetVehicleIndicatorLights(veh) ~= 2)
-                        SetVehicleIndicatorLights(veh, 1, false)
-                        PlaySoundFrontend(-1, 'NAV_UP_DOWN', 'HUD_FRONTEND_DEFAULT_SOUNDSET', false)
-                    end
-                    if IsDisabledControlJustPressed(0, 173) then
-                        local hz = GetVehicleIndicatorLights(veh) == 3
-                        SetVehicleIndicatorLights(veh, 0, not hz)
-                        SetVehicleIndicatorLights(veh, 1, not hz)
-                        PlaySoundFrontend(-1, 'NAV_UP_DOWN', 'HUD_FRONTEND_DEFAULT_SOUNDSET', false)
                     end
                 end
 
