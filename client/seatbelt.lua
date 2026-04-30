@@ -64,7 +64,7 @@ return function(State, Utils, Config)
                     end
                 end
 
-                Wait(16)
+                Wait(0)
             else
                 if State.seatbeltOn then State.seatbeltOn = false end
                 State.ejected = false
