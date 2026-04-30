@@ -7,18 +7,12 @@ author      'Cxsper'
 description 'this is a hud i guess'
 version     '1.1.5'
 
-ui_page 'html/index.html'
+ui_page 'web/dist/index.html'
 
 files {
-    'html/index.html',
-    'html/style.css',
-    'html/vehicle.css',
-    'html/menu.css',
-    'html/app.js',
-    'html/vehicle.js',
-    'html/hud-menu.js',
-    'html/editor.css',
-    'html/editor.js',
+    'web/dist/index.html',
+    'web/dist/assets/*.js',
+    'web/dist/assets/*.css',
     'stream/minimap.gfx',
     'stream/minimap.ytd',
     'stream/squaremap.ytd',
