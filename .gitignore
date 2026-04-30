@@ -1,0 +1,7 @@
+node_modules/
+web/dist/
+.vite/
+*.log
+.DS_Store
+bun.lock
+bun.lockb
