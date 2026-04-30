@@ -131,7 +131,7 @@ return function(State, Utils, isReady, Config)
                 lastResX, lastResY = curResX, curResY
                 mapPatched = false
             end
-            if not mapPatched then
+            if isReady() and not mapPatched then
                 patchMinimap()
             end
         end

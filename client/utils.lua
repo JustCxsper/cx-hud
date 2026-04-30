@@ -26,6 +26,10 @@ return function(Config)
     end
 
     local function sendNui(action, payload)
+        SendNUIMessage({ action = action, data = payload or {} })
+    end
+
+    local function sendNuiSafe(action, payload)
         SendNUIMessage({ action = action, data = sanitizeForNui(payload or {}) })
     end
 
@@ -80,8 +84,10 @@ return function(Config)
 
     local function getVehName(veh)
         if veh == cachedVehHandle then return cachedVehName end
-        local label = GetLabelText(GetDisplayNameFromVehicleModel(GetEntityModel(veh)))
-        if label == 'NULL' or label == '' then label = GetDisplayNameFromVehicleModel(GetEntityModel(veh)) end
+        local model = GetEntityModel(veh)
+        local display = GetDisplayNameFromVehicleModel(model)
+        local label = GetLabelText(display)
+        if label == 'NULL' or label == '' then label = display end
         cachedVehHandle = veh
         cachedVehName   = label
         return label
@@ -89,6 +95,8 @@ return function(Config)
 
     return {
         sendNui          = sendNui,
+        sendNuiSafe      = sendNuiSafe,
+        sanitizeForNui   = sanitizeForNui,
         round            = round,
         headingToCompass = headingToCompass,
         formatMoney      = formatMoney,

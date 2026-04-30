@@ -111,7 +111,7 @@ return function(State, Utils, Vehicle, Minimap, isReady, Config)
                 if t ~= State.isTalking then State.isTalking = t end
                 slowTick = (slowTick + 1) % SLOW_EVERY
                 pushStatus(slowTick == 0)
-                Vehicle.pushVehicle()
+                Vehicle.pushVehicle(slowTick == 0)
                 Wait(Config.UpdateInterval)
             else
                 Wait(500)
@@ -120,7 +120,7 @@ return function(State, Utils, Vehicle, Minimap, isReady, Config)
     end)
 
     local function pushConfig()
-        Utils.sendNui('initConfig', {
+        Utils.sendNuiSafe('initConfig', {
             colors     = Config.Colors,
             defaults   = Config.DefaultVisible,
             logo       = Config.Logo,
@@ -157,7 +157,7 @@ return function(State, Utils, Vehicle, Minimap, isReady, Config)
         showHud(true)
         prevStatus = {}  -- force full resend so NUI state is fresh
         pushStatus(true)
-        Vehicle.pushVehicle()
+        Vehicle.pushVehicle(true)
     end
 
     return {

@@ -1,33 +1,78 @@
 return function(State, Utils, Config)
-    local function pushVehicle()
-        if not cache.vehicle then
-            Utils.sendNui('updateVehicle', { show = false })
+    local prevVehicle = {}
+    local lastVeh = 0
+    local slowTick = 0
+    local SLOW_EVERY = 5
+
+    local function resetVehicleState()
+        prevVehicle = {}
+        lastVeh = 0
+        slowTick = 0
+    end
+
+    local function pushDelta(payload)
+        local delta = {}
+        local changed = false
+
+        for k, v in pairs(payload) do
+            if prevVehicle[k] ~= v then
+                delta[k] = v
+                prevVehicle[k] = v
+                changed = true
+            end
+        end
+
+        if changed then
+            Utils.sendNui('updateVehicle', delta)
+        end
+    end
+
+    local function pushVehicle(forceSlow)
+        local veh = cache.vehicle
+        if not veh then
+            if prevVehicle.show ~= false then
+                Utils.sendNui('updateVehicle', { show = false })
+                resetVehicleState()
+                prevVehicle.show = false
+            end
             return
         end
-        local veh    = cache.vehicle
+
+        local newVehicle = veh ~= lastVeh
+        if newVehicle then
+            resetVehicleState()
+            lastVeh = veh
+            forceSlow = true
+        end
+
+        slowTick = slowTick + 1
+        local doSlow = forceSlow or slowTick >= SLOW_EVERY
+        if doSlow then slowTick = 0 end
+
         local rawSpd = GetEntitySpeed(veh)
         local speed  = Config.SpeedUnit == 'KMH' and rawSpd * 3.6 or rawSpd * 2.236936
         local gear   = GetVehicleCurrentGear(veh)
-        local rpm    = math.floor((GetVehicleCurrentRpm(veh) or 0) * 100)
-        Utils.sendNui('updateVehicle', {
+
+        local payload = {
             show     = true,
             speed    = Utils.round(speed),
             unit     = Config.SpeedUnit,
-            fuel     = Utils.round(GetVehicleFuelLevel(veh)),
-            rpm      = rpm,
+            rpm      = math.floor((GetVehicleCurrentRpm(veh) or 0) * 100),
             gear     = gear == 0 and 'R' or tostring(gear),
-            engine   = math.max(0, math.min(100, Utils.round(GetVehicleEngineHealth(veh) / 10))),
             seatbelt = Config.EnableSeatbelt ~= false and State.seatbeltOn or false,
-            vehName  = Utils.getVehName(veh),
-            lights   = {
-                headlights     = State.lastLights.headlights,
-                highbeam       = State.lastLights.highbeam,
-                indicatorLeft  = State.lastLights.indicatorLeft,
-                indicatorRight = State.lastLights.indicatorRight,
-                hazard         = State.lastLights.hazard,
-            },
-        })
+        }
+
+        if doSlow then
+            payload.fuel    = Utils.round(GetVehicleFuelLevel(veh))
+            payload.engine  = math.max(0, math.min(100, Utils.round(GetVehicleEngineHealth(veh) / 10)))
+            payload.vehName = Utils.getVehName(veh)
+        end
+
+        pushDelta(payload)
     end
 
-    return { pushVehicle = pushVehicle }
+    return {
+        pushVehicle = pushVehicle,
+        resetVehicleState = resetVehicleState,
+    }
 end

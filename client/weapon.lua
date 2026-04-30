@@ -9,6 +9,11 @@ return function(State, Utils, isReady, Config)
     local lastWeaponPayload = nil
     local lastWeaponSeenAt = 0
     local activeInventory = nil
+    local imageCache = {}
+
+    local IsPedSwitchingWeaponNative = _G.IsPedSwitchingWeapon
+    local IsPedWeaponReadyToShootNative = _G.IsPedWeaponReadyToShoot
+    local IsPedArmedNative = _G.IsPedArmed
 
     local function detectInventory()
         if activeInventory ~= nil then return activeInventory end
@@ -24,9 +29,16 @@ return function(State, Utils, isReady, Config)
     end
 
     local function buildWeaponImage(itemName)
+        if not itemName then return nil end
+        if imageCache[itemName] ~= nil then return imageCache[itemName] or nil end
         local inv = detectInventory()
-        if not inv or not inv.path or not itemName then return nil end
-        return inv.path:format(itemName)
+        if not inv or not inv.path then
+            imageCache[itemName] = false
+            return nil
+        end
+        local path = inv.path:format(itemName)
+        imageCache[itemName] = path
+        return path
     end
 
     local function ammoLabel(hash, weapName)
@@ -44,15 +56,27 @@ return function(State, Utils, isReady, Config)
         return '9MM'
     end
 
-    local function nativeBool(name, ...)
-        local fn = _G[name]
+    local function nativeBool(fn, ...)
         if type(fn) ~= 'function' then return false end
         local ok, result = pcall(fn, ...)
         return ok and result == true
     end
 
+    local function hideWeapon()
+        if prevWeapon.show ~= false then
+            prevWeapon = { show = false }
+            lastAmmoByWeapon = {}
+            Utils.sendNui('updateWeapon', { show = false })
+        end
+    end
+
     local function pushWeapon()
         local ped = cache.ped
+        if not ped or ped == 0 then
+            hideWeapon()
+            return false
+        end
+
         local hash = GetSelectedPedWeapon(ped)
         local now = GetGameTimer()
 
@@ -62,14 +86,10 @@ return function(State, Utils, isReady, Config)
                     prevWeapon = lastWeaponPayload
                     Utils.sendNui('updateWeapon', lastWeaponPayload)
                 end
-                return
+                return true
             end
-            if prevWeapon.show ~= false then
-                prevWeapon = { show = false }
-                lastAmmoByWeapon = {}
-                Utils.sendNui('updateWeapon', { show = false })
-            end
-            return
+            hideWeapon()
+            return false
         end
 
         local isMelee = MELEE[hash] == true
@@ -83,9 +103,9 @@ return function(State, Utils, isReady, Config)
             if ammoTotal == 0 then ammoClip = 0 end
 
             local cachedClip = lastAmmoByWeapon[hash]
-            local switching  = nativeBool('IsPedSwitchingWeapon', ped)
-            local notReady   = nativeBool('IsPedWeaponReadyToShoot', ped) == false
-            local notArmed   = nativeBool('IsPedArmed', ped, 4) == false
+            local switching  = nativeBool(IsPedSwitchingWeaponNative, ped)
+            local notReady   = nativeBool(IsPedWeaponReadyToShootNative, ped) == false
+            local notArmed   = nativeBool(IsPedArmedNative, ped, 4) == false
 
             if ammoTotal > 0 and ammoClip == 0 and cachedClip and cachedClip > 0 and (switching or notReady or notArmed) then
                 ammoClip = cachedClip
@@ -118,15 +138,16 @@ return function(State, Utils, isReady, Config)
             prevWeapon = payload
             Utils.sendNui('updateWeapon', payload)
         end
+        return true
     end
 
     CreateThread(function()
         while true do
             if isReady() and not State.menuIsOpen and not State.gameIsPaused then
-                pushWeapon()
-                Wait(Config.UpdateInterval)
+                local armed = pushWeapon()
+                Wait(armed and Config.UpdateInterval or 500)
             else
-                Wait(500)
+                Wait(750)
             end
         end
     end)

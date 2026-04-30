@@ -73,6 +73,18 @@ const hudState = {
 let currentUnit = null
 let hadWaypoint = false
 
+const vehicleViewState = {
+    show: false,
+    speed: 0,
+    unit: 'MPH',
+    rpm: 0,
+    gear: 'N',
+    fuel: 0,
+    engine: 0,
+    vehName: '',
+    seatbelt: false,
+}
+
 function nuiPost(endpoint, body) {
     fetch('https://' + RES_NAME + '/' + endpoint, {
         method: 'POST',
@@ -193,7 +205,8 @@ function applyVisibility() {
     if (elStatusRow) {
         elStatusRow.classList.toggle('hidden', !(hudState.statusRow && (hudState.health || hudState.armor || hudState.hunger || hudState.thirst)))
     }
-    vehicleCard.classList.toggle('hidden', !hudState.vehicle)
+    vehicleCard.classList.toggle('hidden', !(hudState.vehicle && vehicleViewState.show))
+    lightsPanel.classList.toggle('hidden', !(hudState.lights && hudState.vehicle && vehicleViewState.show))
     cineTop.classList.toggle('hidden',    !hudState.cinebars)
     cineBottom.classList.toggle('hidden', !hudState.cinebars)
     if (weaponCard) {
@@ -391,44 +404,53 @@ const handlers = {
     },
 
     updateVehicle(data) {
-        if (!hudState.vehicle) {
+        if (!data) return
+        
+        for (const [key, value] of Object.entries(data)) {
+            if (value !== undefined) vehicleViewState[key] = value
+        }
+
+        if (!vehicleViewState.show) {
             vehicleCard.classList.add('hidden')
             lightsPanel.classList.add('hidden')
             return
         }
-        vehicleCard.classList.toggle('hidden', !data.show)
-        lightsPanel.classList.toggle('hidden', !(hudState.lights && data.show))
-        if (!data.show) return
 
-        elSpeedVal.textContent  = data.speed
-        elSpeedUnit.textContent = data.unit
-        gearDisplay.textContent   = data.gear
-        elRpmVal.textContent    = rpmDisplay(data.rpm)
-        if (data.vehName) elVehName.textContent = data.vehName
+        const canShowVehicle = hudState.vehicle && vehicleViewState.show
+        vehicleCard.classList.toggle('hidden', !canShowVehicle)
+        lightsPanel.classList.toggle('hidden', !(canShowVehicle && hudState.lights))
+        if (!canShowVehicle) return
 
-        updateSpeedRing(data.speed)
-        setSideArc(fuelArc, elFuelPct,   data.fuel)
-        setSideArc(engineArc,  elEnginePct, data.engine)
-        handleGearChange(data.gear)
-        applyRedlineFlash(data.rpm)
+        elSpeedVal.textContent  = vehicleViewState.speed ?? 0
+        elSpeedUnit.textContent = vehicleViewState.unit || 'MPH'
+        gearDisplay.textContent = vehicleViewState.gear || 'N'
+        elRpmVal.textContent    = rpmDisplay(vehicleViewState.rpm)
+        if (vehicleViewState.vehName) elVehName.textContent = vehicleViewState.vehName
+
+        updateSpeedRing(vehicleViewState.speed)
+        setSideArc(fuelArc,    elFuelPct,    vehicleViewState.fuel)
+        setSideArc(engineArc,  elEnginePct,  vehicleViewState.engine)
+        handleGearChange(vehicleViewState.gear)
+        applyRedlineFlash(vehicleViewState.rpm)
 
         if (elSeatbelt) {
-            if (elSeatbeltSp) elSeatbeltSp.textContent = data.seatbelt ? 'Belt On' : 'Belt Off'
-            elSeatbelt.classList.toggle('on',        !!data.seatbelt)
-            elSeatbelt.classList.toggle('belt-warn', !data.seatbelt)
+            if (elSeatbeltSp) elSeatbeltSp.textContent = vehicleViewState.seatbelt ? 'Belt On' : 'Belt Off'
+            elSeatbelt.classList.toggle('on',        !!vehicleViewState.seatbelt)
+            elSeatbelt.classList.toggle('belt-warn', !vehicleViewState.seatbelt)
         }
 
         const vt = window.__cxThresh || { fuel: 10, engine: 20 }
-        setArcWarn(fuelArc, data.fuel,   vt.fuel)
-        setArcWarn(engineArc,  data.engine, vt.engine)
+        setArcWarn(fuelArc,    vehicleViewState.fuel,    vt.fuel)
+        setArcWarn(engineArc,  vehicleViewState.engine,  vt.engine)
 
         if (data.lights) refreshLights(data.lights)
     },
 
     updateLights(data) {
         refreshLights(data)
+        const canShowVehicle = hudState.vehicle && vehicleViewState.show
+        lightsPanel.classList.toggle('hidden', !(canShowVehicle && hudState.lights))
     },
-
 
     updateWeapon(data) {
         if (!elWeaponCard) return
