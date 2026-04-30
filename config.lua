@@ -1,5 +1,5 @@
 Config = {}
-Config.Version = "1.1.7" -- Don't change this, it is used for version checking and update notifications.
+Config.Version = "1.1.8" -- Don't change this, it is used for version checking and update notifications.
 
 Config.DefaultVoice        = 'Normal'
 Config.ShowStress          = true
