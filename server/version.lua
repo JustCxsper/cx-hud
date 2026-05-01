@@ -1,5 +1,4 @@
 local function CheckVersion()
-
     local versionUrl = "https://raw.githubusercontent.com/JustCxsper/cx-hud/refs/heads/main/version.txt"
     local resourceName = GetCurrentResourceName()
 
@@ -22,9 +21,27 @@ local function CheckVersion()
         else
             print("^1[CX Scripts] Could not reach the update server. Error Code: " .. errorCode .. "^7")
         end
+
+        if GetResourceState('jg-stress-addon') ~= 'started' then
+            print("^5[CX HUD]^7 ^3jg-stress-addon not detected, stress system disabled^7")
+        else
+            print("^5[CX HUD]^7 jg-stress-addon detected, stress system ^2enabled^7")
+        end
+
+        local inventoryDetected = false
+        local inventories = { 'ox_inventory', 'qb-inventory', 'ps-inventory', 'core_inventory' }
+        for _, inv in ipairs(inventories) do
+            if GetResourceState(inv) == 'started' then
+                print("^5[CX HUD]^7 Inventory detected for weapon images: ^2" .. inv .. "^7")
+                inventoryDetected = true
+                break
+            end
+        end
+        if not inventoryDetected then
+            print("^5[CX HUD]^7 ^3No supported inventory detected, weapon images will use fallback icon^7")
+        end
     end, "GET")
 end
-
 
 CreateThread(function()
     Citizen.Wait(5000)
