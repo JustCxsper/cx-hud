@@ -45,15 +45,22 @@ return function(State, Utils, isReady, Config)
         weapName = weapName or ''
         if hash == `WEAPON_MUSKET` then return 'MUSKET' end
         if weapName:find('shotgun') then return '12G' end
-        if weapName:find('sniper') or weapName:find('marksman') or weapName:find('heavysniper') then return '.308' end
+        if weapName:find('sniper') or weapName:find('heavysniper') then return '.308' end
+        if weapName:find('marksmanrifle') then return '.308' end
+        if weapName:find('marksmanpistol') then return '.45' end
+        if weapName:find('marksman') then return '.308' end
+        if weapName:find('pistol50') then return '.50' end
+        if weapName:find('heavypistol') then return '.45' end
+        if weapName:find('vintagepistol') then return '.45' end
         if weapName:find('smg') or weapName:find('pdw') or weapName:find('machinepistol') or weapName:find('minismg') or weapName:find('microsmg') then return '9MM' end
+        if weapName:find('pistol') then return '9MM' end
         if weapName:find('rifle') or weapName:find('carbine') or weapName:find('compactrifle') then return '5.56' end
         if weapName:find('mg') or weapName:find('gusenberg') or weapName:find('minigun') then return '7.62' end
         if weapName:find('rpg') or weapName:find('launcher') then return 'ROCKET' end
         if weapName:find('railgun') then return 'RAIL' end
         if weapName:find('firework') then return 'FIREWORK' end
         if weapName:find('flare') then return 'FLARE' end
-        return '9MM'
+        return 'AMMO'
     end
 
     local function nativeBool(fn, ...)
