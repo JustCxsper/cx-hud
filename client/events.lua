@@ -19,6 +19,7 @@ return function(State, Utils, Minimap, Status, Vehicle, isReady, Config)
     end)
 
     AddEventHandler('playerSpawned', function()
+        if not State.coreLoaded then return end
         State.playerSpawned = true; Status.fetchPlayerData()
         CreateThread(function() Wait(1500); SetBigmapActive(false, false); Status.tryShowHud() end)
     end)
