@@ -26,7 +26,7 @@ Config.WarnEngine  = 20
 Config.WarnAmmoClip = 5 -- ammo clip count below which the counter turns red
 
 Config.Logo = {
-    url            = 'https://cdn.discordapp.com/attachments/1492598634821452121/1493684431263764691/cxsperdev-logo.png?ex=69dfdd87&is=69de8c07&hm=8b71b93ff9fc75cd598bcfbecc71447a319b6909af27949ca84ab2ddd47cb7ed&',
+    url            = 'https://cxsper.dev/assets/branding/logo.png',
     width          = 120,
     height         = 80,
     transparentBg  = true,

@@ -47,6 +47,6 @@ server_scripts {
     'server/version.lua',
 }
 
-dependencies {
+optional_dependencies {
     'jg-stress-addon',
 }
