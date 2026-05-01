@@ -141,11 +141,34 @@ return function(State, Utils, Vehicle, Minimap, isReady, Config)
     end
 
     local function fetchPlayerData()
-        local ok, data = pcall(function() return exports['qbx_core']:GetPlayerData() end)
-        if not ok or not data or not next(data) then
-            Wait(500)
-            ok, data = pcall(function() return exports['qbx_core']:GetPlayerData() end)
+        local ok, data
+
+        ok, data = pcall(function() return exports['qbx_core']:GetPlayerData() end)
+        if ok and data and next(data) then
+            State.playerData = data
+            refreshStaticCache()
+            return
         end
+
+        ok, data = pcall(function()
+            local QBCore = exports['qb-core']:GetCoreObject()
+            return QBCore.Functions.GetPlayerData()
+        end)
+        if ok and data and next(data) then
+            State.playerData = data
+            refreshStaticCache()
+            return
+        end
+
+        Wait(500)
+        ok, data = pcall(function() return exports['qbx_core']:GetPlayerData() end)
+        if not ok or not data or not next(data) then
+            ok, data = pcall(function()
+                local QBCore = exports['qb-core']:GetCoreObject()
+                return QBCore.Functions.GetPlayerData()
+            end)
+        end
+
         State.playerData = (ok and data) or {}
         refreshStaticCache()
     end
