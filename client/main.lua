@@ -33,22 +33,25 @@ lib.load('client/events')(State, Utils, Minimap, Status, Vehicle, isReady, Confi
 AddStateBagChangeHandler('invOpen', nil, function(bagName, key, value)
     if not bagName:find('player:') then return end
     if value then
+        if not hudHidden and not State.hudShowing then return end
         if not hudHidden then SendNUIMessage({ action = 'hideHud' }); hudHidden = true end
     else
-        if hudHidden then SendNUIMessage({ action = 'showHud' }); hudHidden = false end
+        if hudHidden and State.hudShowing then SendNUIMessage({ action = 'showHud' }); hudHidden = false end
     end
 end)
 
 exports('showHud', function()
     if not State.hudShowing then
         Minimap.setHudVisible(true)
+        Status.pushConfig()
         Status.showHud(true)
         Status.pushStatus(true)
+        Vehicle.pushVehicle(true)
     end
 end)
 
 exports('hideHud', function()
-    if State.hudShowing then
+    if State.hudShowing and not hudHidden then
         Minimap.setHudVisible(false)
         Status.showHud(false)
     end
