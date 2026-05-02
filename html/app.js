@@ -511,8 +511,9 @@ const handlers = {
 
         const isMeleeOrThrow = data.isMelee || data.isThrow
         const isRecharging = !!data.recharging
+        const isPetrolcan = data.weapName === 'weapon_petrolcan'
 
-        if (elWeaponAmmoRow) elWeaponAmmoRow.classList.toggle('hidden', isMeleeOrThrow || data.isTaser)
+        if (elWeaponAmmoRow) elWeaponAmmoRow.classList.toggle('hidden', isMeleeOrThrow || data.isTaser || isPetrolcan)
         if (elWeaponRechargeRow) elWeaponRechargeRow.classList.toggle('hidden', !data.isTaser)
         if (elWeaponMeleeLabel) elWeaponMeleeLabel.classList.toggle('hidden', !isMeleeOrThrow)
 
