@@ -334,7 +334,7 @@ body {
 .street-pill {
   position: absolute;
   left: var(--mm-left);
-  top: calc(var(--mm-top) - 53px);
+  top: calc(var(--mm-top) - 61px);
   width: var(--mm-w);
   display: flex;
   align-items: center;
