@@ -310,10 +310,15 @@ const elWeaponCard       = document.getElementById('weaponCard')
 const elWeaponImg        = document.getElementById('weaponImg')
 const elWeaponIcon       = document.getElementById('weaponIcon')
 const elWeaponName       = document.getElementById('weaponName')
-const elWeaponAmmoRow    = document.getElementById('weaponAmmoRow')
-const elWeaponAmmoClip   = document.getElementById('weaponAmmoClip')
-const elWeaponAmmoLabel  = document.getElementById('weaponAmmoLabel')
+const elWeaponAmmoRow = document.getElementById('weaponAmmoRow')
+const elWeaponAmmoClip = document.getElementById('weaponAmmoClip')
+const elWeaponAmmoLabel = document.getElementById('weaponAmmoLabel')
 const elWeaponMeleeLabel = document.getElementById('weaponMeleeLabel')
+const elWeaponRechargeRow = document.getElementById('weaponRechargeRow')
+const elWeaponRechargeFill = document.getElementById('weaponRechargeFill')
+const elWeaponRechargeLabel = document.getElementById('weaponRechargeLabel')
+let rechargeRaf = null
+let taserRecharging = false
 
 const handlers = {
     initConfig(data) {
@@ -505,11 +510,46 @@ const handlers = {
             : 'Unknown'
 
         const isMeleeOrThrow = data.isMelee || data.isThrow
-        if (elWeaponAmmoRow)    elWeaponAmmoRow.classList.toggle('hidden',    isMeleeOrThrow)
+        const isRecharging = !!data.recharging
+
+        if (elWeaponAmmoRow) elWeaponAmmoRow.classList.toggle('hidden', isMeleeOrThrow || data.isTaser)
+        if (elWeaponRechargeRow) elWeaponRechargeRow.classList.toggle('hidden', !data.isTaser)
         if (elWeaponMeleeLabel) elWeaponMeleeLabel.classList.toggle('hidden', !isMeleeOrThrow)
 
-        if (!isMeleeOrThrow) {
-            if (elWeaponAmmoClip)  elWeaponAmmoClip.textContent = data.ammoClip ?? 0
+        if (data.isTaser) {
+            elWeaponCard.classList.remove('ammo-low')
+            if (isRecharging && !taserRecharging) {
+                taserRecharging = true
+                if (rechargeRaf) cancelAnimationFrame(rechargeRaf)
+                const ms = data.rechargeMs || 3000
+                const start = performance.now()
+                if (elWeaponRechargeFill) elWeaponRechargeFill.style.width = '0%'
+                if (elWeaponRechargeFill) elWeaponRechargeFill.classList.add('charging')
+                if (elWeaponRechargeRow) elWeaponRechargeRow.classList.remove('ready')
+                if (elWeaponRechargeRow) elWeaponRechargeRow.classList.add('charging')
+                if (elWeaponRechargeLabel) elWeaponRechargeLabel.textContent = 'CHARGING'
+                const tick = (now) => {
+                    const pct = Math.min(1, (now - start) / ms)
+                    if (elWeaponRechargeFill) elWeaponRechargeFill.style.width = (pct * 100) + '%'
+                    if (pct < 1) {
+                        rechargeRaf = requestAnimationFrame(tick)
+                    } else {
+                        rechargeRaf = null
+                        taserRecharging = false
+                        elWeaponRechargeFill && elWeaponRechargeFill.classList.remove('charging')
+                        elWeaponRechargeRow && elWeaponRechargeRow.classList.remove('charging')
+                        elWeaponRechargeRow && elWeaponRechargeRow.classList.add('ready')
+                        elWeaponRechargeLabel && (elWeaponRechargeLabel.textContent = 'READY')
+                        setTimeout(() => elWeaponRechargeRow && elWeaponRechargeRow.classList.remove('ready'), 900)
+                    }
+                }
+                rechargeRaf = requestAnimationFrame(tick)
+            } else if (!isRecharging && !taserRecharging) {
+                if (elWeaponRechargeFill) elWeaponRechargeFill.style.width = '100%'
+                if (elWeaponRechargeLabel) elWeaponRechargeLabel.textContent = 'READY'
+            }
+        } else if (!isMeleeOrThrow) {
+            if (elWeaponAmmoClip) elWeaponAmmoClip.textContent = data.ammoClip ?? 0
             if (elWeaponAmmoLabel) elWeaponAmmoLabel.textContent = data.ammoLabel || 'AMMO'
             elWeaponCard.classList.toggle('ammo-low', !!data.low)
         } else {

@@ -4,6 +4,36 @@ return function(State, Utils, isReady, Config)
     local MELEE = WeaponData.MELEE or {}
     local THROW = WeaponData.THROW or {}
 
+    local STUNGUN = { [`WEAPON_STUNGUN`] = true, [`WEAPON_STUNGUN_MP`] = true }
+    local RECHARGE_MS = 3000
+    local rechargeFinish = {}
+    local taserShotAt = {}
+    local taserEquipped = false
+
+    CreateThread(function()
+        while true do
+            if taserEquipped then
+                local ped = cache.ped
+                local hash = GetSelectedPedWeapon(ped)
+                if STUNGUN[hash] then
+                    if IsPedShooting(ped) and not taserShotAt[hash] then
+                        taserShotAt[hash] = true
+                        rechargeFinish[hash] = GetGameTimer() + RECHARGE_MS
+                    end
+                    if taserShotAt[hash] and GetGameTimer() >= rechargeFinish[hash] then
+                        taserShotAt[hash] = false
+                    end
+                    Wait(0)
+                else
+                    taserEquipped = false
+                    Wait(500)
+                end
+            else
+                Wait(500)
+            end
+        end
+    end)
+
     local prevWeapon = {}
     local lastAmmoByWeapon = {}
     local lastWeaponPayload = nil
@@ -101,9 +131,14 @@ return function(State, Utils, isReady, Config)
 
         local isMelee = MELEE[hash] == true
         local isThrow = THROW[hash] == true
+        local isTaser = STUNGUN[hash] == true
         local ammoClip, ammoTotal = 0, 0
 
-        if not isMelee then
+        if isTaser then
+            taserEquipped = true
+            ammoClip = 1
+            ammoTotal = 0
+        elseif not isMelee then
             local hasClipAmmo, clipAmmo = GetAmmoInClip(ped, hash)
             ammoClip  = (hasClipAmmo and tonumber(clipAmmo)) or 0
             ammoTotal = tonumber(GetAmmoInPedWeapon(ped, hash)) or 0
@@ -131,7 +166,10 @@ return function(State, Utils, isReady, Config)
             weaponImageBase = buildWeaponImage(weapName),
             isMelee = isMelee,
             isThrow = isThrow,
-            low = (not isMelee and not isThrow) and (ammoClip <= (Config.WarnAmmoClip or 5)),
+            isTaser = isTaser,
+            recharging = isTaser and taserShotAt[hash] == true,
+            rechargeMs = RECHARGE_MS,
+            low = (not isMelee and not isThrow and not isTaser) and (ammoClip <= (Config.WarnAmmoClip or 5)),
         }
 
         lastWeaponPayload = payload
