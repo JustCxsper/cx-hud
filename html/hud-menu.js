@@ -96,6 +96,7 @@ for (const key of Object.keys(hudState)) {
         applyVisibility()
         saveHudState()
         if (key === 'minimap') nuiPost('setMinimapVisible', { visible: cb.checked })
+        if (key === 'cinebars') nuiPost('setCinebars', { visible: cb.checked })
     })
 }
 

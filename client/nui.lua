@@ -31,6 +31,15 @@ return function(State, Utils, Minimap, Status, Vehicle, Config)
         cb('ok')
     end)
 
+    RegisterNuiCallback('setCinebars', function(data, cb)
+        if data.visible then
+            exports[GetCurrentResourceName()]:hideHud()
+        else
+            exports[GetCurrentResourceName()]:showHud()
+        end
+        cb('ok')
+    end)
+
     RegisterNuiCallback('nuiViewport', function(data, cb)
         if data and Minimap and Minimap.setNuiViewport then
             Minimap.setNuiViewport(data.width, data.height)
