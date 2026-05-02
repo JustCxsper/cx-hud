@@ -40,6 +40,11 @@ return function(State, Utils, Minimap, Status, Vehicle, Config)
         cb('ok')
     end)
 
+    RegisterNuiCallback('setHudHidden', function(_, cb)
+        exports[GetCurrentResourceName()]:toggleHud()
+        cb('ok')
+    end)
+
     RegisterNuiCallback('nuiViewport', function(data, cb)
         if data and Minimap and Minimap.setNuiViewport then
             Minimap.setNuiViewport(data.width, data.height)

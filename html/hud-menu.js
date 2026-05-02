@@ -111,3 +111,10 @@ if (unitToggle) {
         nuiPost('setSpeedUnit', { unit: currentUnit })
     })
 }
+
+const hideHudToggle = document.getElementById('tog-hideHud')
+if (hideHudToggle) {
+    hideHudToggle.addEventListener('change', () => {
+        nuiPost('setHudHidden')
+    })
+}

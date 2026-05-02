@@ -1,4 +1,5 @@
 local hudHidden = false
+local hudUserHidden = false
 local State = {
     playerData      = {},
     hudShowing      = false,
@@ -54,5 +55,18 @@ exports('hideHud', function()
     if State.hudShowing and not hudHidden then
         Minimap.setHudVisible(false)
         Status.showHud(false)
+    end
+end)
+
+exports('toggleHud', function()
+    hudUserHidden = not hudUserHidden
+    if hudUserHidden then
+        Minimap.setHudVisible(false)
+        Status.showHud(false)
+    else
+        Minimap.setHudVisible(true)
+        Status.showHud(true)
+        Status.pushStatus(true)
+        Vehicle.pushVehicle(true)
     end
 end)
