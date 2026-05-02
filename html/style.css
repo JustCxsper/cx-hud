@@ -247,6 +247,7 @@ body {
 
 .job-card {
   gap: 10px;
+  container-type: inline-size;
 }
 
 .tr-ico-wrap {
@@ -274,6 +275,14 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+@container (min-width: 160px) {
+  .tr-meta strong { font-size: 13px; }
+}
+
+@container (min-width: 200px) {
+  .tr-meta strong { font-size: 14px; }
 }
 
 .tr-meta span {
