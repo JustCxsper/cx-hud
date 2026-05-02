@@ -29,7 +29,7 @@ return function(State, Utils, Config)
 
     local function pushVehicle(forceSlow)
         local veh = cache.vehicle
-        if not veh then
+        if not veh or not DoesEntityExist(veh) then
             if prevVehicle.show ~= false then
                 Utils.sendNui('updateVehicle', { show = false })
                 resetVehicleState()

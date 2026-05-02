@@ -1,12 +1,12 @@
 return function(State, Utils, isReady)
     CreateThread(function()
         while true do
-            if isReady() and cache.vehicle then
+            if isReady() and cache.vehicle and DoesEntityExist(cache.vehicle) then
                 local veh       = cache.vehicle
                 local on, _, hb = GetVehicleLightsState(veh)
                 local ind       = GetVehicleIndicatorLights(veh)
                 local fl        = {
-                    headlights     = on >= 1,
+                    headlights     = (on or 0) >= 1,
                     highbeam       = hb == true or hb == 1,
                     indicatorLeft  = ind == 1 or ind == 3,
                     indicatorRight = ind == 2 or ind == 3,
