@@ -15,7 +15,6 @@ Config.EnableSeatbelt    = true -- do u even want to use our seatbelt? if not se
 Config.SeatbeltEject      = true
 Config.SeatbeltEjectSpeed = 60.0
 Config.SeatbeltBodyThresh = 500.0
-Config.SeatbeltKey        = 29
 
 -- Warning thresholds
 Config.WarnHealth  = 20

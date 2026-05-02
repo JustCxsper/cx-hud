@@ -1,5 +1,4 @@
 return function(State, Utils, Config)
-    local BELT_KEY    = Config.SeatbeltKey or 29
     local beltEnabled = Config.EnableSeatbelt ~= false
 
     local lastIndicatorPress = 0
@@ -62,22 +61,26 @@ return function(State, Utils, Config)
     RegisterKeyMapping('cxhud_indicator_right', 'Vehicle indicator: right', 'keyboard', 'RIGHT')
     RegisterKeyMapping('cxhud_hazards', 'Vehicle hazards', 'keyboard', 'DOWN')
 
+    if beltEnabled then
+        RegisterCommand('cxhud_seatbelt', function()
+            if not cache.vehicle then return end
+            State.seatbeltOn = not State.seatbeltOn
+            lib.notify({
+                title       = 'Seatbelt',
+                description = State.seatbeltOn and 'Seatbelt fastened' or 'Seatbelt removed',
+                type        = State.seatbeltOn and 'success' or 'error',
+                duration    = 2000,
+            })
+        end, false)
+        RegisterKeyMapping('cxhud_seatbelt', 'Toggle seatbelt', 'keyboard', 'B')
+    end
+
     CreateThread(function()
         while true do
             local veh = cache.vehicle
             if veh then
                 if not beltEnabled and State.seatbeltOn then
                     State.seatbeltOn = false
-                end
-
-                if beltEnabled and IsControlJustPressed(0, BELT_KEY) then
-                    State.seatbeltOn = not State.seatbeltOn
-                    lib.notify({
-                        title       = 'Seatbelt',
-                        description = State.seatbeltOn and 'Seatbelt fastened' or 'Seatbelt removed',
-                        type        = State.seatbeltOn and 'success' or 'error',
-                        duration    = 2000,
-                    })
                 end
 
                 if beltEnabled and State.seatbeltOn then
