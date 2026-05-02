@@ -285,6 +285,14 @@ body {
   .tr-meta strong { font-size: 14px; }
 }
 
+@container (min-width: 160px) {
+  .tr-meta strong { font-size: 13px; }
+}
+
+@container (min-width: 200px) {
+  .tr-meta strong { font-size: 14px; }
+}
+
 .tr-meta span {
   font-size: 10px;
   color: var(--muted);
