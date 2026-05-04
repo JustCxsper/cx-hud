@@ -75,6 +75,51 @@ This opens the settings panel where players can:
 * Hide/Show the player card, minimap, status rings, or vehicle HUD.
 * Toggle the cinematic black bars.
 
+## Server Default Layout
+
+Server owners can set a default HUD layout that is automatically applied to new players who have never configured their own layout.
+
+### Setting a Default Layout
+
+1. Add the following ACE permission to your `server.cfg`, replacing `group.admin` with whichever group or identifier you want to grant access to:
+
+```cfg
+add_ace group.admin cx-hud.setdefaultlayout allow
+```
+
+2. Join the server with a player that has the permission above.
+3. Open the HUD editor via `/hud` → **Edit Layout**.
+4. Arrange the HUD elements however you want.
+5. Click the gold **Set Server Default** button that appears in the editor toolbar.
+6. Enter a name for the layout (1–32 characters, letters/numbers/spaces/underscores/hyphens, must start with a letter or number).
+7. Click **Save as Default**.
+
+The layout is stored in FiveM's KVP system and persists across server restarts. The server console will confirm the saved layout name every time the resource starts:
+
+```
+[CX HUD] Default layout detected: My Layout Name
+```
+
+### How It Applies to Players
+
+New players (or players who have reset their layout) will automatically receive the server default on login. Players who have already customised their own layout are never affected — their personal layout always takes priority.
+
+### Resetting the Server Default
+
+To clear the server default layout, run the following command in the **server console** or **txAdmin console**:
+
+```
+cx_resetdefault
+```
+
+This immediately clears the stored layout from KVP and from memory. The next resource start will print `No server default layout set`. To set a new one, just follow the steps above again.
+
+### Resetting a Player's Personal Layout
+
+Players can reset their own layout back to defaults using the **Reset** button inside the HUD editor. This fully clears their saved layout from KVP, meaning the server default will re-apply on their next login if one is set.
+
+---
+
 ## Exports (Added with v1.1.1)
 I have added exports in to allow users to `Hide` and `Show` the HUD. This is specifically useful if you need to hide the HUD for e.g Weazle News Broadcasts etc. 
 >Make sure you have started `cx-hud` **BEFORE** the resource using the exports otherwise you will get a NoExport error. 

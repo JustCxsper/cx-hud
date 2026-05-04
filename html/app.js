@@ -347,6 +347,30 @@ const handlers = {
         if (data.outdated) badge.title = 'Update available: v' + data.latest
     },
 
+    playerLayout(data) {
+        if (!data || typeof data.layout !== 'object') return
+        try { localStorage.setItem('cx_hud_layout_v1', JSON.stringify(data.layout)) } catch (_) {}
+        if (Object.keys(data.layout).length > 0 && typeof edApplyOnBoot === 'function') edApplyOnBoot()
+    },
+
+    serverDefaultLayout(data) {
+        if (typeof edSetCanSaveDefault === 'function') edSetCanSaveDefault(!!data.canSetDefault)
+        if (!data.layout) return
+        try {
+            const raw = localStorage.getItem('cx_hud_layout_v1')
+            if (raw) {
+                const parsed = JSON.parse(raw)
+                if (Object.keys(parsed).length > 0) return
+            }
+            localStorage.setItem('cx_hud_layout_v1', JSON.stringify(data.layout))
+            if (typeof edApplyOnBoot === 'function') edApplyOnBoot()
+        } catch (_) {}
+    },
+
+    saveDefaultResult(data) {
+        if (typeof edHandleSaveResult === 'function') edHandleSaveResult(data.success, data.message)
+    },
+
     toggleHud(data) {
         hudRoot.classList.toggle('hidden', !data.visible)
     },

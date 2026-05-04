@@ -12,16 +12,19 @@ const DRAGGABLES = [
 ]
 
 
-let editorOpen     = false
-let snapEnabled    = false
-let snapGridSize   = 20
-let savedLayout    = {}
-let activePanel    = null
-let dragState      = null
-let dragHandles    = []
-let handleSyncRaf   = null
-let showingVeh     = true
-let mmHomePosition = null
+let editorOpen        = false
+let snapEnabled       = false
+let snapGridSize      = 20
+let savedLayout       = {}
+let activePanel       = null
+let dragState         = null
+let dragHandles       = []
+let handleSyncRaf     = null
+let showingVeh        = true
+let mmHomePosition    = null
+let canSetDefault     = false
+let serverDefaultBtnEl = null
+let namingModal       = null
 
 let theOverlay, theGrid, gridPen, ghostBox, toastEl, confirmBox, toastKiller
 
@@ -51,6 +54,7 @@ function loadLayout() {
 
 function saveLayout() {
     try { localStorage.setItem(YEET_KEY, JSON.stringify(savedLayout)) } catch (_) {}
+    nuiPost('kvpSaveLayout', savedLayout)
 }
 
 function applyOneBlock(block) {
@@ -410,7 +414,8 @@ function toggleVehiclePreview() {
 
 function doReset() {
     savedLayout = {}
-    saveLayout()
+    try { localStorage.removeItem(YEET_KEY) } catch (_) {}
+    nuiPost('kvpDeleteLayout')
 
     DRAGGABLES.forEach(b => {
         const el = document.querySelector(b.sel)
@@ -483,6 +488,8 @@ function buildOverlay() {
         <button class="ed-btn ed-btn-reset" id="edResetBtn"><i class="fa-solid fa-rotate-left"></i> Reset</button>
         <button class="ed-btn ed-btn-save"  id="edSaveBtn"><i class="fa-solid fa-floppy-disk"></i> Save</button>
         <button class="ed-btn ed-btn-close" id="edCloseBtn"><i class="fa-solid fa-xmark"></i> Close</button>
+        <div class="ed-sep" id="edAdminSep" style="display:none"></div>
+        <button class="ed-btn ed-btn-server-default" id="edServerDefaultBtn" style="display:none"><i class="fa-solid fa-server"></i> Set Server Default</button>
     `
     theOverlay.appendChild(toolbar)
 
@@ -501,12 +508,91 @@ function buildOverlay() {
     })
     toolbar.querySelector('#edCloseBtn').addEventListener('click', closeEditor)
 
+    serverDefaultBtnEl = toolbar.querySelector('#edServerDefaultBtn')
+    serverDefaultBtnEl.addEventListener('click', showNameModal)
+    if (canSetDefault) {
+        serverDefaultBtnEl.style.display = ''
+        toolbar.querySelector('#edAdminSep').style.display = ''
+    }
+
+    namingModal = document.createElement('div')
+    namingModal.id = 'editorNameModal'
+    namingModal.innerHTML = `
+        <div class="ed-name-box">
+            <div class="ed-name-title"><i class="fa-solid fa-server"></i>Set Server Default</div>
+            <div class="ed-name-subtitle">New players who haven't customised their layout will start with this one.</div>
+            <div class="ed-name-field-label">
+                <span>Layout Name</span>
+                <span class="ed-name-counter" id="edNameCounter">0 / 32</span>
+            </div>
+            <input class="ed-name-input-large" id="edNameInput" type="text" maxlength="32" placeholder="e.g. My Server Default" autocomplete="off" spellcheck="false">
+            <div class="ed-name-error" id="edNameError"></div>
+            <div class="ed-name-actions">
+                <button class="ed-btn-name-save" id="edNameSave" disabled><i class="fa-solid fa-floppy-disk"></i> Save as Default</button>
+                <button class="ed-btn-name-cancel" id="edNameCancel">Cancel</button>
+            </div>
+        </div>
+    `
+    theOverlay.appendChild(namingModal)
+
+    const nameInput  = namingModal.querySelector('#edNameInput')
+    const nameError  = namingModal.querySelector('#edNameError')
+    const nameSaveBtn = namingModal.querySelector('#edNameSave')
+    const NAME_RE    = /^[A-Za-z0-9][A-Za-z0-9 _-]{0,31}$/
+
+    nameInput.addEventListener('input', () => {
+        const val = nameInput.value.trim()
+        const counter = namingModal.querySelector('#edNameCounter')
+        if (counter) {
+            counter.textContent = val.length + ' / 32'
+            counter.classList.toggle('warn', val.length > 24)
+        }
+        if (NAME_RE.test(val)) {
+            nameSaveBtn.disabled = false
+            nameError.textContent = ''
+        } else {
+            nameSaveBtn.disabled = true
+            nameError.textContent = val.length === 0 ? '' : 'Must start with a letter or number. Allowed: letters, numbers, spaces, _ and -'
+        }
+    })
+
+    nameInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !nameSaveBtn.disabled) nameSaveBtn.click()
+    })
+
+    nameSaveBtn.addEventListener('click', () => {
+        const name = nameInput.value.trim()
+        if (!NAME_RE.test(name)) return
+        namingModal.classList.remove('visible')
+        nuiPost('saveServerDefault', { layout: savedLayout, name })
+        popToast('Saving layout...')
+    })
+
+    namingModal.querySelector('#edNameCancel').addEventListener('click', () => {
+        namingModal.classList.remove('visible')
+    })
+
     document.addEventListener('keydown', onEditorKey)
+}
+
+function showNameModal() {
+    if (!namingModal) return
+    const inp = namingModal.querySelector('#edNameInput')
+    const err = namingModal.querySelector('#edNameError')
+    const btn = namingModal.querySelector('#edNameSave')
+    const ctr = namingModal.querySelector('#edNameCounter')
+    if (inp) inp.value = ''
+    if (err) err.textContent = ''
+    if (btn) btn.disabled = true
+    if (ctr) { ctr.textContent = '0 / 32'; ctr.classList.remove('warn') }
+    namingModal.classList.add('visible')
+    setTimeout(() => inp?.focus(), 50)
 }
 
 function onEditorKey(e) {
     if (!editorOpen) return
     if (e.key === 'Escape') {
+        if (namingModal?.classList.contains('visible')) { namingModal.classList.remove('visible'); return }
         if (confirmBox.classList.contains('visible')) { confirmBox.classList.remove('visible'); return }
         closeEditor()
     }
@@ -591,6 +677,18 @@ const edForceRingRepaint = forceRingRepaint
 const edHandles          = dragHandles
 const edApplyOnBoot      = kickOffOnBoot
 const edSyncHandle       = syncHandlePos
+
+function edSetCanSaveDefault(val) {
+    canSetDefault = !!val
+    if (!serverDefaultBtnEl) return
+    const sep = theOverlay?.querySelector('#edAdminSep')
+    serverDefaultBtnEl.style.display = canSetDefault ? '' : 'none'
+    if (sep) sep.style.display = canSetDefault ? '' : 'none'
+}
+
+function edHandleSaveResult(success, msg) {
+    popToast(msg || (success ? 'Saved!' : 'Save failed.'))
+}
 
 document.getElementById('editLayoutBtn')?.addEventListener('click', () => {
     closeSettings()

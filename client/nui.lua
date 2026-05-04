@@ -51,4 +51,24 @@ return function(State, Utils, Minimap, Status, Vehicle, Config)
         end
         cb('ok')
     end)
+
+    RegisterNuiCallback('saveServerDefault', function(data, cb)
+        if data and type(data.layout) == 'table' and type(data.name) == 'string' then
+            TriggerServerEvent('cx-hud:saveServerDefault', data.layout, data.name)
+        end
+        cb('ok')
+    end)
+
+    RegisterNuiCallback('kvpSaveLayout', function(data, cb)
+        if data and type(data) == 'table' then
+            local ok, encoded = pcall(json.encode, data)
+            if ok then SetResourceKvp('cx_hud_layout', encoded) end
+        end
+        cb('ok')
+    end)
+
+    RegisterNuiCallback('kvpDeleteLayout', function(_, cb)
+        DeleteResourceKvp('cx_hud_layout')
+        cb('ok')
+    end)
 end

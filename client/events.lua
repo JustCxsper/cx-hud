@@ -6,10 +6,21 @@ return function(State, Utils, Minimap, Status, Vehicle, isReady, Config)
         Utils.sendNui('openMenu', {})
     end, false)
 
+    local function sendKvpLayout()
+        local raw = GetResourceKvpString('cx_hud_layout')
+        if not raw or raw == '' then return end
+        local ok, layout = pcall(json.decode, raw)
+        if ok and type(layout) == 'table' then
+            Utils.sendNui('playerLayout', { layout = layout })
+        end
+    end
+
     RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
         Status.fetchPlayerData()
         State.coreLoaded    = true
         State.playerSpawned = true
+        sendKvpLayout()
+        TriggerServerEvent('cx-hud:requestDefaultLayout')
         CreateThread(function() Wait(1500); SetBigmapActive(false, false); Status.tryShowHud() end)
     end)
 
@@ -32,6 +43,8 @@ return function(State, Utils, Minimap, Status, Vehicle, isReady, Config)
             if NetworkIsPlayerActive(cache.playerId) and DoesEntityExist(cache.ped) then
                 State.playerSpawned = true
             end
+            sendKvpLayout()
+            TriggerServerEvent('cx-hud:requestDefaultLayout')
             CreateThread(function() Wait(1000); SetBigmapActive(false, false); Status.tryShowHud() end)
         else
             Status.showHud(false)
@@ -76,5 +89,17 @@ return function(State, Utils, Minimap, Status, Vehicle, isReady, Config)
 
     RegisterNetEvent('cx-hud:versionResult', function(current, latest, outdated)
         Utils.sendNui('versionInfo', { current = current, latest = latest, outdated = outdated })
+    end)
+
+    RegisterNetEvent('cx-hud:receiveDefaultLayout', function(defaultLayoutData, canSetDefault)
+        Utils.sendNui('serverDefaultLayout', {
+            layout        = defaultLayoutData and defaultLayoutData.layout or nil,
+            name          = defaultLayoutData and defaultLayoutData.name  or nil,
+            canSetDefault = canSetDefault or false,
+        })
+    end)
+
+    RegisterNetEvent('cx-hud:saveDefaultResult', function(success, msg)
+        Utils.sendNui('saveDefaultResult', { success = success, message = msg })
     end)
 end

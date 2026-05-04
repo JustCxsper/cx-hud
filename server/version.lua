@@ -40,6 +40,8 @@ local function CheckVersion()
         if not inventoryDetected then
             print("^5[CX HUD]^7 ^3No supported inventory detected, weapon images will use fallback icon^7")
         end
+
+        PrintLayoutStatus()
     end, "GET")
 end
 
