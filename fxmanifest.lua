@@ -5,7 +5,7 @@ lua54 'yes'
 name        'cx-hud'
 author      'Cxsper'
 description 'this is a hud i guess'
-version     '1.2.1'
+version     '1.2.2'
 
 ui_page 'html/index.html'
 
