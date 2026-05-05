@@ -195,8 +195,13 @@ function startDrag(e, h) {
     e.stopPropagation()
     closePanel()
 
-    const startX = parseFloat(h.el.style.left) || getRect(h.el).left
-    const startY = parseFloat(h.el.style.top)  || getRect(h.el).top
+    const r       = getRect(h.el)
+    const cssLeft = parseFloat(h.el.style.left)
+    const cssTop  = parseFloat(h.el.style.top)
+    const startX  = isNaN(cssLeft) ? r.left : cssLeft
+    const startY  = isNaN(cssTop)  ? r.top  : cssTop
+    const ghostDX = isNaN(cssLeft) ? 0 : r.left - cssLeft
+    const ghostDY = isNaN(cssTop)  ? 0 : r.top  - cssTop
 
     dragState = {
         h,
@@ -204,6 +209,7 @@ function startDrag(e, h) {
         mouseStartX: e.clientX,
         mouseStartY: e.clientY,
         moved: false,
+        ghostDX, ghostDY,
     }
 
     h.handle.classList.add('dragging')
@@ -219,7 +225,7 @@ function startDrag(e, h) {
 
 function onDragMove(e) {
     if (!dragState) return
-    const { h, startX, startY, mouseStartX, mouseStartY } = dragState
+    const { h, startX, startY, mouseStartX, mouseStartY, ghostDX, ghostDY } = dragState
 
     const rawX = startX + (e.clientX - mouseStartX)
     const rawY = startY + (e.clientY - mouseStartY)
@@ -228,13 +234,11 @@ function onDragMove(e) {
         dragState.moved = true
     }
 
-    h.el.style.left     = rawX + 'px'
-    h.el.style.top      = rawY + 'px'
-    h.handle.style.left = rawX + 'px'
-    h.handle.style.top  = rawY + 'px'
+    h.el.style.left = rawX + 'px'
+    h.el.style.top  = rawY + 'px'
 
-    ghostBox.style.left = snapToGrid(rawX) + 'px'
-    ghostBox.style.top  = snapToGrid(rawY) + 'px'
+    ghostBox.style.left = snapToGrid(rawX + ghostDX) + 'px'
+    ghostBox.style.top  = snapToGrid(rawY + ghostDY) + 'px'
 }
 
 function onDragEnd(e) {
@@ -249,10 +253,9 @@ function onDragEnd(e) {
     const finalX = snapToGrid(startX + (e.clientX - mouseStartX))
     const finalY = snapToGrid(startY + (e.clientY - mouseStartY))
 
-    h.el.style.left     = finalX + 'px'
-    h.el.style.top      = finalY + 'px'
-    h.handle.style.left = finalX + 'px'
-    h.handle.style.top  = finalY + 'px'
+    h.el.style.left = finalX + 'px'
+    h.el.style.top  = finalY + 'px'
+    syncHandlePos(h)
 
     savedLayout[h.block.id] = { ...(savedLayout[h.block.id] || {}), x: finalX, y: finalY }
 
