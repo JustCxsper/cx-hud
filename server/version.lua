@@ -9,7 +9,8 @@ local function CheckVersion()
 
             print("^5[CX Scripts]^7 Checking for updates...")
 
-            if latestVersion ~= currentVersion then
+            local outdated = latestVersion ~= currentVersion
+            if outdated then
                 print("^1[CX Scripts] WARNING: " .. resourceName .. " is outdated!^7")
                 print("^1[CX Scripts] Current Version: " .. currentVersion .. "^7")
                 print("^2[CX Scripts] Latest Version: " .. latestVersion .. "^7")
@@ -18,6 +19,7 @@ local function CheckVersion()
             else
                 print("^2[CX Scripts] " .. resourceName .. " is up to date (v" .. currentVersion .. ")^7")
             end
+            TriggerClientEvent('cx-hud:versionResult', -1, currentVersion, latestVersion, outdated)
         else
             print("^1[CX Scripts] Could not reach the update server. Error Code: " .. errorCode .. "^7")
         end

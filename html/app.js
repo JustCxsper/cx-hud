@@ -329,6 +329,10 @@ const handlers = {
         if (data?.menuOptions) window.__menuOptions = data.menuOptions
         applyMinimapGeo(data?.minimapGeo)
         if (data?.defaults)   applyConfigDefaults(data.defaults)
+        if (data?.version) {
+            const badge = document.getElementById('versionBadge')
+            if (badge) badge.textContent = 'v' + data.version
+        }
         bootHudState()
         const savedUnit = loadSpeedUnit()
         if (savedUnit) nuiPost('setSpeedUnit', { unit: savedUnit })

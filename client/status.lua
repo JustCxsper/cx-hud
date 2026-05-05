@@ -127,6 +127,7 @@ return function(State, Utils, Vehicle, Minimap, isReady, Config)
             redline    = Config.RedlineThreshold,
             minimapGeo = Minimap.calculateMinimapGeo(),
             menuOptions = Config.MenuOptions,
+            version    = Config.Version,
             thresholds = {
                 health = Config.WarnHealth, hunger = Config.WarnHunger,
                 thirst = Config.WarnThirst, fuel   = Config.WarnFuel,
