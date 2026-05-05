@@ -648,6 +648,8 @@ function closeEditor() {
     const sRow = document.getElementById('statusRow')
     if (pill && !savedLayout.streetPill) { pill.style.left = ''; pill.style.top = '' }
     if (sRow && !savedLayout.statusRow)  { sRow.style.left = '';  sRow.style.top = '' }
+
+    if (typeof applyVisibility === 'function') applyVisibility()
 }
 
 function kickOffOnBoot() {
