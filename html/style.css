@@ -332,29 +332,30 @@ body {
 }
 
 .street-pill {
+  --sp-base: clamp(9px, calc(var(--mm-w) * 0.038), 15px);
   position: absolute;
   left: var(--mm-left);
   top: calc(var(--mm-top) - 61px);
   width: var(--mm-w);
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: calc(var(--sp-base) * 0.75);
   border-radius: 10px;
-  padding: 8px 12px;
+  padding: calc(var(--sp-base) * 0.67) calc(var(--sp-base) * 1);
   box-sizing: border-box;
 }
 
 .dir-badge {
-  width: 28px;
-  height: 28px;
+  width: calc(var(--sp-base) * 2.33);
+  height: calc(var(--sp-base) * 2.33);
   border-radius: 10px;
   display: grid;
   place-items: center;
   background: rgba(255, 255, 255, 0.07);
   font-family: 'Rajdhani', sans-serif;
-  font-size: 14px;
+  font-size: calc(var(--sp-base) * 1.17);
   font-weight: 700;
-  flex: 0 0 28px;
+  flex: 0 0 calc(var(--sp-base) * 2.33);
 }
 
 .street-copy-wrap {
@@ -371,7 +372,7 @@ body {
 }
 
 .street-copy strong {
-  font-size: 12px;
+  font-size: var(--sp-base);
   font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
@@ -379,15 +380,15 @@ body {
 }
 
 .street-copy span {
-  font-size: 10px;
+  font-size: calc(var(--sp-base) * 0.83);
   color: var(--muted);
 }
 
 .clock-waypoint-wrap {
   position: relative;
   flex: 0 0 auto;
-  min-width: 62px;
-  height: 30px;
+  min-width: calc(var(--sp-base) * 5.17);
+  height: calc(var(--sp-base) * 2.5);
 }
 
 .clock-waypoint-wrap .clock-badge,
@@ -400,23 +401,23 @@ body {
 
 .clock-badge {
   border-radius: 10px;
-  padding: 0 10px;
+  padding: 0 calc(var(--sp-base) * 0.83);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: calc(var(--sp-base) * 0.5);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border);
   font-family: 'Rajdhani', sans-serif;
   font-weight: 700;
-  font-size: 14px;
+  font-size: calc(var(--sp-base) * 1.17);
   letter-spacing: .04em;
   color: var(--accent);
   white-space: nowrap;
 }
 
 .clock-badge i {
-  font-size: 11px;
+  font-size: calc(var(--sp-base) * 0.92);
   opacity: 0.75;
 }
 

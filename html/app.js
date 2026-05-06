@@ -66,7 +66,7 @@ const RES_NAME = typeof window.GetParentResourceName === 'function'
 const hudState = {
     portrait: true, charname: true, voice: true, playerid: false,
     logo: true, job: true, cash: true, bank: true,
-    minimap: true, minimapBorder: true, streetPill: true, streetclock: true, statusRow: true,
+    minimap: true, minimapBorder: true, streetPill: true, streetclock: true, streetCompass: true, statusRow: true,
     health: true, armor: true, hunger: true, thirst: true,
     vehicle: true, lights: true, cinebars: false, weapon: true,
 }
@@ -201,6 +201,7 @@ function applyVisibility() {
         tlCard.classList.toggle('hidden', !showTlCard)
     }
     if (streetPill) streetPill.classList.toggle('hidden', !hudState.streetPill)
+    if (elDirection) elDirection.classList.toggle('hidden', !hudState.streetCompass)
     if (wpWrap) wpWrap.classList.toggle('hidden', !hudState.streetclock)
     if (clockChip) clockChip.classList.toggle('hidden', !hudState.streetclock)
     if (elStatusRow) {
