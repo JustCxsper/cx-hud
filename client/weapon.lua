@@ -129,9 +129,10 @@ return function(State, Utils, isReady, Config)
             return false
         end
 
-        local isMelee = MELEE[hash] == true
-        local isThrow = THROW[hash] == true
-        local isTaser = STUNGUN[hash] == true
+        local isMelee     = MELEE[hash] == true
+        local isThrow     = THROW[hash] == true
+        local isTaser     = STUNGUN[hash] == true
+        local isPetrolcan = hash == `WEAPON_PETROLCAN`
         local ammoClip, ammoTotal = 0, 0
 
         if isTaser then
@@ -144,15 +145,28 @@ return function(State, Utils, isReady, Config)
             ammoTotal = tonumber(GetAmmoInPedWeapon(ped, hash)) or 0
             if ammoTotal == 0 then ammoClip = 0 end
 
-            local cachedClip = lastAmmoByWeapon[hash]
-            local switching  = nativeBool(IsPedSwitchingWeaponNative, ped)
-            local notReady   = nativeBool(IsPedWeaponReadyToShootNative, ped) == false
-            local notArmed   = nativeBool(IsPedArmedNative, ped, 4) == false
+            if not isPetrolcan then
+                local cachedClip = lastAmmoByWeapon[hash]
+                local switching  = nativeBool(IsPedSwitchingWeaponNative, ped)
+                local notReady   = nativeBool(IsPedWeaponReadyToShootNative, ped) == false
+                local notArmed   = nativeBool(IsPedArmedNative, ped, 4) == false
 
-            if ammoTotal > 0 and ammoClip == 0 and cachedClip and cachedClip > 0 and (switching or notReady or notArmed) then
-                ammoClip = cachedClip
+                if ammoTotal > 0 and ammoClip == 0 and cachedClip and cachedClip > 0 and (switching or notReady or notArmed) then
+                    ammoClip = cachedClip
+                else
+                    lastAmmoByWeapon[hash] = ammoClip
+                end
             else
-                lastAmmoByWeapon[hash] = ammoClip
+                if GetResourceState('ox_inventory') == 'started' then
+                    local ok, item = pcall(exports.ox_inventory.getCurrentWeapon, exports.ox_inventory)
+                    if ok and item and item.metadata then
+                        local dur = tonumber(item.metadata.durability)
+                        if dur ~= nil then
+                            ammoClip  = math.floor(dur)
+                            ammoTotal = ammoClip
+                        end
+                    end
+                end
             end
         end
 
@@ -167,6 +181,7 @@ return function(State, Utils, isReady, Config)
             isMelee = isMelee,
             isThrow = isThrow,
             isTaser = isTaser,
+            isPouring = isPetrolcan and IsPedShooting(ped),
             recharging = isTaser and taserShotAt[hash] == true,
             rechargeMs = RECHARGE_MS,
             low = (not isMelee and not isThrow and not isTaser) and (ammoClip <= (Config.WarnAmmoClip or 5)),
@@ -175,9 +190,11 @@ return function(State, Utils, isReady, Config)
         lastWeaponPayload = payload
         lastWeaponSeenAt = now
 
-        local changed = false
-        for k, v in pairs(payload) do
-            if prevWeapon[k] ~= v then changed = true break end
+        local changed = isPetrolcan
+        if not changed then
+            for k, v in pairs(payload) do
+                if prevWeapon[k] ~= v then changed = true break end
+            end
         end
         if changed then
             prevWeapon = payload

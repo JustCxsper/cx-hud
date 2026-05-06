@@ -319,6 +319,11 @@ const elWeaponMeleeLabel = document.getElementById('weaponMeleeLabel')
 const elWeaponRechargeRow = document.getElementById('weaponRechargeRow')
 const elWeaponRechargeFill = document.getElementById('weaponRechargeFill')
 const elWeaponRechargeLabel = document.getElementById('weaponRechargeLabel')
+const elWeaponFuelRow   = document.getElementById('weaponFuelRow')
+const elWeaponFuelFill  = document.getElementById('weaponFuelFill')
+const elWeaponFuelLabel = document.getElementById('weaponFuelLabel')
+let fuelRaf = null
+let fuelWasPetrolcan = false
 let rechargeRaf = null
 let taserRecharging = false
 
@@ -550,7 +555,21 @@ const handlers = {
 
         if (elWeaponAmmoRow) elWeaponAmmoRow.classList.toggle('hidden', isMeleeOrThrow || data.isTaser || isPetrolcan)
         if (elWeaponRechargeRow) elWeaponRechargeRow.classList.toggle('hidden', !data.isTaser)
+        if (elWeaponFuelRow) elWeaponFuelRow.classList.toggle('hidden', !isPetrolcan)
         if (elWeaponMeleeLabel) elWeaponMeleeLabel.classList.toggle('hidden', !isMeleeOrThrow)
+
+        if (!isPetrolcan && fuelRaf) {
+            cancelAnimationFrame(fuelRaf); fuelRaf = null
+        }
+
+        if (isPetrolcan) {
+            const pct = Math.min(100, Math.max(0, Math.round(data.ammoClip ?? 0)))
+            if (elWeaponFuelFill) elWeaponFuelFill.style.width = pct + '%'
+            if (elWeaponFuelLabel) elWeaponFuelLabel.textContent = 'FUEL ' + pct + '%'
+            if (elWeaponFuelRow) elWeaponFuelRow.classList.toggle('fuel-low', pct <= 20)
+        }
+
+        fuelWasPetrolcan = isPetrolcan
 
         if (data.isTaser) {
             elWeaponCard.classList.remove('ammo-low')
@@ -584,7 +603,7 @@ const handlers = {
                 if (elWeaponRechargeFill) elWeaponRechargeFill.style.width = '100%'
                 if (elWeaponRechargeLabel) elWeaponRechargeLabel.textContent = 'READY'
             }
-        } else if (!isMeleeOrThrow) {
+        } else if (!isMeleeOrThrow && !isPetrolcan) {
             if (elWeaponAmmoClip) elWeaponAmmoClip.textContent = data.ammoClip ?? 0
             if (elWeaponAmmoLabel) elWeaponAmmoLabel.textContent = data.ammoLabel || 'AMMO'
             elWeaponCard.classList.toggle('ammo-low', !!data.low)
