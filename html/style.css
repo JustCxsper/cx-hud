@@ -490,6 +490,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+.status-pill.armor,
 .status-pill.stress,
 .status-pill.stamina {
   opacity: 0;
@@ -502,6 +503,7 @@ body {
   padding: 0;
 }
 
+.status-pill.armor.visible,
 .status-pill.stress.visible,
 .status-pill.stamina.visible {
   opacity: 1;

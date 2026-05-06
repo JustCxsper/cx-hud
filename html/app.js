@@ -37,6 +37,7 @@ const elThirstBar  = document.getElementById('thirstBar')
 const elStressBar  = document.getElementById('stressBar')
 const elStaminaBar = document.getElementById('staminaBar')
 const elCompHealth = document.getElementById('comp-health')
+const elCompArmor  = document.getElementById('comp-armor')
 const elCompHunger = document.getElementById('comp-hunger')
 const elCompThirst = document.getElementById('comp-thirst')
 const elStatusRow  = document.getElementById('statusRow')
@@ -415,7 +416,12 @@ const handlers = {
         }
 
         if (data.health  !== undefined) setRing(elHealthBar,  data.health)
-        if (data.armour  !== undefined) setRing(elArmorBar,   data.armour)
+
+        if (data.armour !== undefined) {
+            setRing(elArmorBar, data.armour)
+            elCompArmor.classList.toggle('visible', data.armour > 0)
+        }
+        
         if (data.hunger  !== undefined) setRing(elHungerBar,  data.hunger)
         if (data.thirst  !== undefined) setRing(elThirstBar,  data.thirst)
         if (data.stress  !== undefined) setRing(elStressBar,  data.stress)
