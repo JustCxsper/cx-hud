@@ -4,6 +4,7 @@ const weaponCard    = document.getElementById('weaponCard')
 const lightsPanel    = document.getElementById('lightsPanel')
 const stressPill  = document.getElementById('stressPill')
 const staminaPill = document.getElementById('staminaPill')
+const oxygenPill = document.getElementById('oxygenPill')
 const speedRing    = document.getElementById('speedRing')
 const settingsMenu  = document.getElementById('hudMenu')
 const fuelArc     = document.getElementById('fuelArc')
@@ -36,6 +37,7 @@ const elHungerBar  = document.getElementById('hungerBar')
 const elThirstBar  = document.getElementById('thirstBar')
 const elStressBar  = document.getElementById('stressBar')
 const elStaminaBar = document.getElementById('staminaBar')
+const elOxygenBar = document.getElementById('oxygenBar')
 const elCompHealth = document.getElementById('comp-health')
 const elCompArmor  = document.getElementById('comp-armor')
 const elCompHunger = document.getElementById('comp-hunger')
@@ -149,6 +151,7 @@ function injectColors(cols) {
         cash: '--cash', bank: '--bank',
         ringHealth: '--ring-health', ringArmor: '--ring-armor', ringHunger: '--ring-hunger',
         ringThirst: '--ring-thirst', ringStress: '--ring-stress', ringStamina: '--ring-stamina',
+        ringOxygen: '--ring-oxygen',
         arcFuel: '--arc-fuel', arcEngine: '--arc-engine',
         lightIndicator: '--light-indicator', lightHeadlight: '--light-headlight', lightHighbeam: '--light-highbeam',
         beltWarn: '--belt-warn', warnGlow: '--warn-glow',
@@ -252,7 +255,7 @@ const RING_CIRC     = 125.66
 const RING_CIRC_STR = RING_CIRC + ' ' + RING_CIRC
 
 function initRings() {
-    for (const el of [elHealthBar, elArmorBar, elHungerBar, elThirstBar, elStressBar, elStaminaBar]) {
+    for (const el of [elHealthBar, elArmorBar, elHungerBar, elThirstBar, elStressBar, elStaminaBar, elOxygenBar]) {
         if (el) el.style.strokeDasharray = RING_CIRC_STR
     }
 }
@@ -432,6 +435,7 @@ const handlers = {
         if (data.thirst  !== undefined) setRing(elThirstBar,  data.thirst)
         if (data.stress  !== undefined) setRing(elStressBar,  data.stress)
         if (data.stamina !== undefined) setRing(elStaminaBar, 100 - (data.stamina || 0))
+        if (data.oxygen  !== undefined) setRing(elOxygenBar, 100 - (data.oxygen || 0))
 
         if (data.talking !== undefined) {
             if (voiceRingContainer) voiceRingContainer.classList.toggle('talking', !!data.talking)
@@ -439,6 +443,8 @@ const handlers = {
 
         if (data.showStress  !== undefined) stressPill.classList.toggle('visible',  !!data.showStress)
         if (data.showStamina !== undefined) staminaPill.classList.toggle('visible', !!data.showStamina)
+        if (data.showOxygen !== undefined) oxygenPill.classList.toggle('visible', !!data.showOxygen)
+        if (data.oxygenCritical !== undefined) oxygenPill.classList.toggle('critical', !!data.oxygenCritical)
 
         if (data.waypointDist !== undefined) updateWaypointChip(data.waypointDist || null)
 

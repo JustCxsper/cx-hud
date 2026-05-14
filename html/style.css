@@ -17,6 +17,7 @@
   --ring-thirst: #38c9ff;
   --ring-stress: #ff2d6b;
   --ring-stamina: #9f78ff;
+  --ring-oxygen: #58b7ff;
   --arc-fuel: #7ee8ca;
   --arc-engine: #8fb8ff;
   --light-indicator: #f5a623;
@@ -493,7 +494,8 @@ body {
 
 .status-pill.armor,
 .status-pill.stress,
-.status-pill.stamina {
+.status-pill.stamina,
+.status-pill.oxygen {
   opacity: 0;
   transform: scale(0.65);
   pointer-events: none;
@@ -506,7 +508,8 @@ body {
 
 .status-pill.armor.visible,
 .status-pill.stress.visible,
-.status-pill.stamina.visible {
+.status-pill.stamina.visible,
+.status-pill.oxygen.visible {
   opacity: 1;
   transform: scale(1);
   pointer-events: auto;
@@ -569,6 +572,11 @@ body {
   filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ring-stamina) 80%, transparent));
 }
 
+.oxygen .s-ring-fill {
+  stroke: var(--ring-oxygen);
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ring-oxygen) 80%, transparent));
+}
+
 .s-inner {
   width: 32px;
   height: 32px;
@@ -608,6 +616,23 @@ body {
 
 .stamina .s-ico {
   color: var(--ring-stamina);
+}
+
+.oxygen .s-ico {
+  color: var(--ring-oxygen);
+}
+
+@keyframes oxygenCriticalPulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(88, 183, 255, 0.0); }
+  50% { box-shadow: 0 0 14px rgba(88, 183, 255, 0.6); }
+}
+
+.status-pill.oxygen.critical .pill-bg {
+  animation: oxygenCriticalPulse 1.1s ease-in-out infinite;
+}
+
+.status-pill.oxygen.critical .s-ring-fill {
+  filter: drop-shadow(0 0 6px rgba(88, 183, 255, 0.95));
 }
 
 @keyframes warnPulse {

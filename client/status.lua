@@ -53,6 +53,17 @@ return function(State, Utils, Vehicle, Minimap, isReady, Config)
         local thirst  = Utils.round(meta.thirst or 100)
         local stress  = Utils.round(LocalPlayer.state.stress or meta.stress or 0)
         local stamina = math.max(0, math.min(100, GetPlayerSprintStaminaRemaining(cache.playerId)))
+        local isUnderwater = IsPedSwimmingUnderWater(cache.ped)
+        local isSwimming = IsPedSwimming(cache.ped)
+        local oxygenRemaining = GetPlayerUnderwaterTimeRemaining(cache.playerId)
+        local oxygen = 100
+        if isUnderwater or isSwimming then
+            if oxygenRemaining and oxygenRemaining >= 0.0 then
+                oxygen = math.max(0, math.min(100, (oxygenRemaining / 10.0) * 100.0))
+            else
+                oxygen = 0
+            end
+        end
 
         local status = {
             health       = Utils.round(hp),
@@ -61,6 +72,7 @@ return function(State, Utils, Vehicle, Minimap, isReady, Config)
             thirst       = thirst,
             stress       = stress,
             stamina      = Utils.round(stamina),
+            oxygen       = Utils.round(oxygen),
             talking      = State.isTalking,
             voice        = State.voiceLabel,
             cash         = cachedCash,
@@ -78,6 +90,8 @@ return function(State, Utils, Vehicle, Minimap, isReady, Config)
             seatbelt     = State.seatbeltOn,
             showStress   = Config.ShowStress and stress >= Config.StressThreshold,
             showStamina  = (IsPedRunning(cache.ped) or IsPedSprinting(cache.ped)) and stamina < 99,
+            showOxygen   = (isUnderwater or isSwimming) and oxygen < 99,
+            oxygenCritical = (isUnderwater or isSwimming) and oxygen <= 0,
             waypointDist = cachedWaypoint,
         }
 

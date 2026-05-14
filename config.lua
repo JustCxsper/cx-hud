@@ -112,6 +112,7 @@ Config.Colors = {
     ringThirst     = '#38c9ff',
     ringStress     = '#ff2d6b',
     ringStamina    = '#9f78ff',
+    ringOxygen     = '#58b7ff',
     arcFuel        = '#7ee8ca',
     arcEngine      = '#8fb8ff',
     lightIndicator = '#f5a623',
