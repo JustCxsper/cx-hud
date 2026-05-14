@@ -65,6 +65,8 @@ return function(State, Utils, Vehicle, Minimap, isReady, Config)
             end
         end
 
+        local inVehicle = IsPedInAnyVehicle(cache.ped, false)
+
         local status = {
             health       = Utils.round(hp),
             armour       = Utils.round(armour),
@@ -86,7 +88,7 @@ return function(State, Utils, Vehicle, Minimap, isReady, Config)
             direction    = Utils.headingToCompass(heading),
             job          = cachedJob,
             grade        = cachedGrade,
-            inVehicle    = cache.vehicle ~= nil,
+            inVehicle    = inVehicle,
             seatbelt     = State.seatbeltOn,
             showStress   = Config.ShowStress and stress >= Config.StressThreshold,
             showStamina  = (IsPedRunning(cache.ped) or IsPedSprinting(cache.ped)) and stamina < 99,
@@ -141,6 +143,7 @@ return function(State, Utils, Vehicle, Minimap, isReady, Config)
             redline    = Config.RedlineThreshold,
             minimapGeo = Minimap.calculateMinimapGeo(),
             menuOptions = Config.MenuOptions,
+            hideMapAndStreetOnFoot = Config.HideMapAndStreetOnFoot,
             version    = Config.Version,
             thresholds = {
                 health = Config.WarnHealth, hunger = Config.WarnHunger,

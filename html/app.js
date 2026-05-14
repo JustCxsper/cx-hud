@@ -75,6 +75,8 @@ const hudState = {
 
 let currentUnit = null
 let hadWaypoint = false
+let hideMapAndStreetOnFoot = false
+let statusInVehicle = false
 
 const vehicleViewState = {
     show: false,
@@ -203,7 +205,10 @@ function applyVisibility() {
         const showTlCard = hudState.portrait || hudState.charname || hudState.playerid
         tlCard.classList.toggle('hidden', !showTlCard)
     }
-    if (streetPill) streetPill.classList.toggle('hidden', !hudState.streetPill)
+    if (streetPill) {
+        const hideStreetPill = !hudState.streetPill || (hideMapAndStreetOnFoot && !statusInVehicle)
+        streetPill.classList.toggle('hidden', hideStreetPill)
+    }
     if (elDirection) elDirection.classList.toggle('hidden', !hudState.streetCompass)
     if (wpWrap) wpWrap.classList.toggle('hidden', !hudState.streetclock)
     if (clockChip) clockChip.classList.toggle('hidden', !hudState.streetclock)
@@ -219,7 +224,10 @@ function applyVisibility() {
         if (!hudState.weapon) weaponCard.classList.remove('weapon-visible')
     }
     const borderRing = document.querySelector('.minimap-border-ring')
-    if (borderRing) borderRing.classList.toggle('hidden', !(hudState.minimap && hudState.minimapBorder))
+    if (borderRing) {
+        const hideMinimapOnFoot = hideMapAndStreetOnFoot && !statusInVehicle
+        borderRing.classList.toggle('hidden', !(hudState.minimap && hudState.minimapBorder) || hideMinimapOnFoot)
+    }
 }
 
 function applyLockedOptions() {
@@ -337,6 +345,7 @@ const handlers = {
         if (data?.redline)    { redlineRpm = data.redline; buildRedlineMarker(redlineRpm) }
         if (data?.logo)       applyLogo(data.logo)
         if (data?.menuOptions) window.__menuOptions = data.menuOptions
+        hideMapAndStreetOnFoot = !!data?.hideMapAndStreetOnFoot
         applyMinimapGeo(data?.minimapGeo)
         if (data?.defaults)   applyConfigDefaults(data.defaults)
         if (data?.version) {
@@ -398,6 +407,10 @@ const handlers = {
     },
 
     updateStatus(data) {
+        if (data.inVehicle !== undefined) {
+            statusInVehicle = !!data.inVehicle
+            applyVisibility()
+        }
         if (data.voice !== undefined) {
             if (voiceRingContainer) {
                 voiceRingContainer.classList.remove('mode-Whisper', 'mode-Normal', 'mode-Shout')

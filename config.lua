@@ -5,13 +5,16 @@ Config.DefaultVoice        = 'Normal'
 Config.ShowStress          = true
 Config.StressThreshold     = 5
 Config.UpdateInterval      = 100
-Config.MenuCommand         = 'hud'
+Config.MenuCommand            = 'hud'
+
+-- Hide Minimap on foot
+Config.HideMapAndStreetOnFoot = false
 
 -- Redline threshold (percentage)
 Config.RedlineThreshold = 85
 
 -- Seatbelt settings
-Config.EnableSeatbelt    = true -- do u even want to use our seatbelt? if not set it to false 
+Config.EnableSeatbelt    = true -- do u even want to use our seatbelt? if not set it to false
 Config.SeatbeltEject      = true
 Config.SeatbeltEjectSpeed = 60.0
 Config.SeatbeltBodyThresh = 500.0

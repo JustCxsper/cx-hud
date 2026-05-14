@@ -147,8 +147,9 @@ return function(State, Utils, isReady, Config)
         while true do
             Wait(500)
             local canShow = isReady()
-            local inCar   = canShow and cache.vehicle ~= nil or false
-            local show    = canShow and hudVisible and minimapVisible and inCar
+            local inCar   = canShow and IsPedInAnyVehicle(cache.ped, false) or false
+            local showOnFoot = not Config.HideMapAndStreetOnFoot
+            local show    = canShow and hudVisible and minimapVisible and (inCar or showOnFoot)
             if canShow ~= lastCanShow or inCar ~= lastInCar or show ~= lastShow then
                 if canShow then
                     patchMinimap()
