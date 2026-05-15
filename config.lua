@@ -6,7 +6,7 @@ Config.ShowStress          = true
 Config.StressThreshold     = 5
 Config.UpdateInterval      = 100
 Config.MenuCommand            = 'hud'
-Config.UsePSBuffs            = true
+Config.UsePSBuffs            = false
 
 -- Hide Minimap on foot
 Config.HideMapAndStreetOnFoot = false
