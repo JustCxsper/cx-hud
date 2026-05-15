@@ -26,13 +26,12 @@ A modern, highly customizable, and lightweight HUD for **Qbox** and **QBCore** F
 
 * **Weapon/Ammo UI:** Added 27th April 2026
 
-## Features Coming Soon
+* **PS BUFFS SUPPORT**
 
-* * **Oxygen Status**
+## Features Coming Soon
  
 * * **Helicopter / Boats UI**
  
-* * **ps-buffs integration**
   
 ## Dependencies
 
