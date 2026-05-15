@@ -43,6 +43,7 @@ const elCompArmor  = document.getElementById('comp-armor')
 const elCompHunger = document.getElementById('comp-hunger')
 const elCompThirst = document.getElementById('comp-thirst')
 const elStatusRow  = document.getElementById('statusRow')
+const elPsBuffRow  = document.getElementById('psBuffRow')
 const elSpeedVal   = document.getElementById('speedVal')
 const elSpeedUnit  = document.getElementById('speedUnit')
 const elRpmVal     = document.getElementById('rpmVal')
@@ -69,6 +70,7 @@ const hudState = {
     portrait: true, charname: true, voice: true, playerid: false,
     logo: true, job: true, cash: true, bank: true,
     minimap: true, minimapBorder: true, streetPill: true, streetclock: true, streetCompass: true, statusRow: true,
+    psBuffRow: true,
     health: true, armor: true, hunger: true, thirst: true,
     vehicle: true, lights: true, cinebars: false, weapon: true,
 }
@@ -77,6 +79,8 @@ let currentUnit = null
 let hadWaypoint = false
 let hideMapAndStreetOnFoot = false
 let statusInVehicle = false
+let usePSBuffs = false
+const psBuffState = {}
 
 const vehicleViewState = {
     show: false,
@@ -123,6 +127,7 @@ function applyMinimapGeo(geo) {
 
     const pill = document.getElementById('streetPill')
     const statusRow = document.getElementById('statusRow')
+    const psBuffRow = document.getElementById('psBuffRow')
     const saved = (() => { try { return JSON.parse(localStorage.getItem('cx_hud_layout_v1') || '{}') } catch (_) { return {} } })()
 
     const editorOpen = typeof edIsOpen !== 'undefined' && edIsOpen()
@@ -134,6 +139,10 @@ function applyMinimapGeo(geo) {
         if (statusRow && !saved.statusRow) {
             statusRow.style.left = ''
             statusRow.style.top  = ''
+        }
+        if (psBuffRow && !saved.psBuffRow) {
+            psBuffRow.style.left = ''
+            psBuffRow.style.top  = ''
         }
     }
     if (typeof edForceRingRepaint === 'function') edForceRingRepaint()
@@ -215,6 +224,11 @@ function applyVisibility() {
     if (elStatusRow) {
         elStatusRow.classList.toggle('hidden', !(hudState.statusRow && (hudState.health || hudState.armor || hudState.hunger || hudState.thirst)))
     }
+    if (elPsBuffRow) {
+        const hasBuffs = Object.keys(psBuffState).length > 0
+        const editorOpen = typeof edIsOpen !== 'undefined' && edIsOpen()
+        elPsBuffRow.classList.toggle('hidden', !(usePSBuffs && hudState.psBuffRow && (hasBuffs || editorOpen)))
+    }
     vehicleCard.classList.toggle('hidden', !(hudState.vehicle && vehicleViewState.show))
     lightsPanel.classList.toggle('hidden', !(hudState.lights && hudState.vehicle && vehicleViewState.show))
     cineTop.classList.toggle('hidden',    !hudState.cinebars)
@@ -228,6 +242,48 @@ function applyVisibility() {
         const hideMinimapOnFoot = hideMapAndStreetOnFoot && !statusInVehicle
         borderRing.classList.toggle('hidden', !(hudState.minimap && hudState.minimapBorder) || hideMinimapOnFoot)
     }
+}
+
+const psBuffIconMap = {
+    database: 'fa-database',
+    lightbulb: 'fa-lightbulb',
+    dollarsign: 'fa-dollar-sign',
+    wind: 'fa-wind',
+    dumbbell: 'fa-dumbbell',
+    swimmer: 'fa-person-swimming',
+    heart: 'fa-heart',
+    shield: 'fa-shield-halved',
+    brain: 'fa-brain',
+    burger: 'fa-burger',
+    droplet: 'fa-droplet',
+}
+
+function renderPsBuffRow() {
+    if (!elPsBuffRow) return
+    elPsBuffRow.innerHTML = ''
+
+    const entries = Object.entries(psBuffState)
+    entries.sort((a, b) => String(a[0]).localeCompare(String(b[0])))
+
+    for (const [buffName, buff] of entries) {
+        const iconClass = psBuffIconMap[(buff.iconName || '').toLowerCase()] || 'fa-star'
+        const pill = document.createElement('div')
+        pill.className = 'status-pill ps-buff-item visible'
+        pill.title = buff.buffName || buffName
+        pill.innerHTML = `
+            <div class="pill-bg"></div>
+            <svg class="s-ring-svg" viewBox="0 0 44 44">
+                <circle class="s-ring-track" cx="22" cy="22" r="20"></circle>
+                <circle class="s-ring-fill" cx="22" cy="22" r="20"></circle>
+            </svg>
+            <div class="s-inner"><i class="fa-solid ${iconClass} s-ico"></i></div>
+        `
+        elPsBuffRow.appendChild(pill)
+        const fill = pill.querySelector('.s-ring-fill')
+        setRing(fill, buff.progressValue ?? 100)
+    }
+
+    applyVisibility()
 }
 
 function applyLockedOptions() {
@@ -346,6 +402,7 @@ const handlers = {
         if (data?.logo)       applyLogo(data.logo)
         if (data?.menuOptions) window.__menuOptions = data.menuOptions
         hideMapAndStreetOnFoot = !!data?.hideMapAndStreetOnFoot
+        usePSBuffs = !!data?.usePSBuffs
         applyMinimapGeo(data?.minimapGeo)
         if (data?.defaults)   applyConfigDefaults(data.defaults)
         if (data?.version) {
@@ -356,6 +413,7 @@ const handlers = {
         const savedUnit = loadSpeedUnit()
         if (savedUnit) nuiPost('setSpeedUnit', { unit: savedUnit })
         if (typeof edApplyOnBoot === 'function') edApplyOnBoot()
+        renderPsBuffRow()
     },
 
     setMinimapGeo(data) {
@@ -404,6 +462,17 @@ const handlers = {
 
     openMenu() {
         openSettings()
+    },
+
+    updatePsBuffs(data) {
+        const incoming = (data && data.buffs) || {}
+        for (const k of Object.keys(psBuffState)) delete psBuffState[k]
+        for (const [name, buff] of Object.entries(incoming)) {
+            if (buff && buff.display !== false) {
+                psBuffState[name] = buff
+            }
+        }
+        renderPsBuffRow()
     },
 
     updateStatus(data) {

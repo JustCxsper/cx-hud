@@ -6,6 +6,7 @@ const DRAGGABLES = [
     { id: 'minimapCluster', sel: '.minimap-cluster', label: 'Minimap', isMinimap: true, noPanel: true },
     { id: 'streetPill',     sel: '#streetPill',      label: 'Street Pill'     },
     { id: 'statusRow',      sel: '#statusRow',       label: 'Status Rings',   hasOrient: true },
+    { id: 'psBuffRow',      sel: '#psBuffRow',       label: 'Buff Row',       hasOrient: true },
     { id: 'vehicleCard',    sel: '#vehicleCard',      label: 'Speedometer',    canHide: true },
     { id: 'lightsPanel',    sel: '#lightsPanel',      label: 'Lights Panel',   canHide: true },
     { id: 'weaponCard',     sel: '#weaponCard',       label: 'Weapon & Ammo',  canHide: true },

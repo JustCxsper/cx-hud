@@ -465,6 +465,13 @@ body {
   gap: 6px;
 }
 
+.ps-buff-row {
+  left: 16px;
+  top: 364px;
+  width: auto;
+  min-height: 39px;
+}
+
 .status-row.vertical {
   flex-direction: column;
   width: auto;
@@ -654,6 +661,15 @@ body {
 .status-pill.warn-low .s-ring-fill {
   stroke: #ff3355 !important;
   filter: drop-shadow(0 0 5px rgba(255, 40, 60, 0.9)) !important;
+}
+
+.status-pill.ps-buff-item .s-ring-fill {
+  stroke: #fde829;
+  filter: drop-shadow(0 0 4px rgba(253, 232, 41, 0.8));
+}
+
+.status-pill.ps-buff-item .s-ico {
+  color: #fde829;
 }
 
 .weapon-card {

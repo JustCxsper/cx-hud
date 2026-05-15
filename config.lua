@@ -6,6 +6,7 @@ Config.ShowStress          = true
 Config.StressThreshold     = 5
 Config.UpdateInterval      = 100
 Config.MenuCommand            = 'hud'
+Config.UsePSBuffs            = true
 
 -- Hide Minimap on foot
 Config.HideMapAndStreetOnFoot = false
@@ -60,6 +61,7 @@ Config.DefaultVisible = {
     streetclock   = true,
     streetCompass = true,
     statusRow     = true,
+    psBuffRow     = true,
     health      = true,
     armor       = true,
     hunger      = true,
@@ -87,6 +89,7 @@ Config.MenuOptions = {
     streetclock   = true,
     streetCompass = true,
     statusRow     = true,
+    psBuffRow     = true,
     health      = true,
     armor       = true,
     hunger      = true,

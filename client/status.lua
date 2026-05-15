@@ -144,6 +144,7 @@ return function(State, Utils, Vehicle, Minimap, isReady, Config)
             minimapGeo = Minimap.calculateMinimapGeo(),
             menuOptions = Config.MenuOptions,
             hideMapAndStreetOnFoot = Config.HideMapAndStreetOnFoot,
+            usePSBuffs = Config.UsePSBuffs,
             version    = Config.Version,
             thresholds = {
                 health = Config.WarnHealth, hunger = Config.WarnHunger,

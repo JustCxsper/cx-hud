@@ -31,6 +31,7 @@ shared_scripts {
 
 client_scripts {
     'client/utils.lua',
+    'client/buffs.lua',
     'client/minimap.lua',
     'client/vehicle.lua',
     'client/weapon_data.lua',
@@ -50,4 +51,5 @@ server_scripts {
 
 optional_dependencies {
     'jg-stress-addon',
+    'ps-buffs',
 }
