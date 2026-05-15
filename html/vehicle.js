@@ -8,7 +8,14 @@ function updateSpeedRing(spd) {
 }
 
 function rpmDisplay(pct) {
-    return Math.round((Math.max(0, Math.min(100, pct || 0)) / 100) * 8000).toLocaleString()
+    const p = Math.max(0, Math.min(100, pct || 0))
+    const IDLE_PCT = 20
+    const IDLE_RPM = 800
+    const REDLINE_RPM = 7000
+    const rpm = p <= IDLE_PCT
+        ? (p / IDLE_PCT) * IDLE_RPM
+        : IDLE_RPM + ((p - IDLE_PCT) / (100 - IDLE_PCT)) * (REDLINE_RPM - IDLE_RPM)
+    return Math.round(rpm).toLocaleString()
 }
 
 function setSideArc(arcEl, pctLabelEl, value) {
@@ -37,6 +44,8 @@ function handleGearChange(newGear) {
 function applyRedlineFlash(rpmPct) {
     const isRed = rpmPct >= redlineRpm
     speedRing.classList.toggle('redline-active', isRed)
+    const pill = document.getElementById('rpmPill')
+    if (pill) pill.classList.toggle('redline', isRed)
 }
 
 function buildRedlineMarker(threshold) {

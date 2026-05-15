@@ -146,6 +146,7 @@ return function(State, Utils, Vehicle, Minimap, isReady, Config)
             hideMapAndStreetOnFoot = Config.HideMapAndStreetOnFoot,
             usePSBuffs = Config.UsePSBuffs,
             version    = Config.Version,
+            jgMileage  = Config.JGMileage == true,
             thresholds = {
                 health = Config.WarnHealth, hunger = Config.WarnHunger,
                 thirst = Config.WarnThirst, fuel   = Config.WarnFuel,

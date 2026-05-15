@@ -119,6 +119,27 @@ Players can reset their own layout back to defaults using the **Reset** button i
 
 ---
 
+## jg-vehiclemileage Integration
+
+### Enabling
+
+1. Install and start `jg-vehiclemileage` as normal.
+2. In `cx-hud/config.lua`, set:
+   ```lua
+   Config.JGMileage = true
+   ```
+3. Hide jg's default UI so it doesn't render twice. Open `jg-vehiclemileage/config.lua` and set:
+   ```lua
+   Config.ShowMileage = false
+   ```
+4. Restart your server.
+
+Mileage tracking keeps running inside jg-vehiclemileage; cx-hud just reads the value via its `getMileage` export and renders it inside the speedometer. The unit (`miles` / `km`) follows your cx-hud `SpeedUnit` setting.
+
+### Disabling
+
+Set `Config.JGMileage = false` in `cx-hud/config.lua` and the speedometer reverts to the original layout (RPM number centered at the bottom, no odometer). You can leave jg-vehiclemileage running or stopped — it makes no difference to cx-hud in this mode.
+
 ## Exports (Added with v1.1.1)
 I have added exports in to allow users to `Hide` and `Show` the HUD. This is specifically useful if you need to hide the HUD for e.g Weazle News Broadcasts etc. 
 >Make sure you have started `cx-hud` **BEFORE** the resource using the exports otherwise you will get a NoExport error. 

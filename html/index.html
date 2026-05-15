@@ -194,6 +194,10 @@
           <circle class="speed-ring-fill"               cx="115" cy="115" r="95" id="speedRing"/>
         </svg>
         <div class="speed-center">
+          <div class="rpm-pill" id="rpmPill">
+            <span class="rpm-pill-val" id="rpmVal">0</span>
+            <span class="rpm-pill-lbl">RPM</span>
+          </div>
           <div class="speed-num-wrap">
             <strong class="speed-val"  id="speedVal">0</strong>
             <span   class="speed-unit" id="speedUnit">MPH</span>
@@ -211,9 +215,13 @@
             <span id="enginePct">100%</span>
           </div>
         </div>
-        <div class="rpm-row">
-          <span class="rpm-lbl">RPM</span>
-          <span class="rpm-val" id="rpmVal">0</span>
+        <div class="odo-pill hidden" id="odoPill">
+          <div class="odo" id="odometer"></div>
+          <span class="odo-unit" id="mileageUnit">miles</span>
+        </div>
+        <div class="rpm-row-legacy" id="rpmRowLegacy">
+          <span class="rpm-lbl-legacy">RPM</span>
+          <span class="rpm-val-legacy" id="rpmValLegacy">0</span>
         </div>
       </div>
       <div class="veh-footer">

@@ -6,6 +6,8 @@ Config.ShowStress          = true
 Config.StressThreshold     = 5
 Config.UpdateInterval      = 100
 Config.MenuCommand            = 'hud'
+
+-- ps-buffs integration
 Config.UsePSBuffs            = false
 
 -- Hide Minimap on foot
@@ -13,6 +15,9 @@ Config.HideMapAndStreetOnFoot = false
 
 -- Redline threshold (percentage)
 Config.RedlineThreshold = 85
+
+-- jg-vehiclemileage integration
+Config.JGMileage = false
 
 -- Seatbelt settings
 Config.EnableSeatbelt    = true -- do u even want to use our seatbelt? if not set it to false

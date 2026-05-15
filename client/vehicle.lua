@@ -66,6 +66,15 @@ return function(State, Utils, Config)
             payload.fuel    = Utils.round(GetVehicleFuelLevel(veh))
             payload.engine  = math.max(0, math.min(100, Utils.round(GetVehicleEngineHealth(veh) / 10)))
             payload.vehName = Utils.getVehName(veh)
+
+            if Config.JGMileage and GetResourceState('jg-vehiclemileage') == 'started' then
+                local ok, km = pcall(function() return exports['jg-vehiclemileage']:getMileage() end)
+                if ok and type(km) == 'number' then
+                    local isMiles = Config.SpeedUnit == 'MPH'
+                    payload.mileage = math.floor((isMiles and km * 0.621371 or km) + 0.5)
+                    payload.mileageUnit = isMiles and 'MI' or 'KM'
+                end
+            end
         end
 
         pushDelta(payload)

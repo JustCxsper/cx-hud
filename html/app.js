@@ -47,7 +47,42 @@ const elPsBuffRow  = document.getElementById('psBuffRow')
 const elSpeedVal   = document.getElementById('speedVal')
 const elSpeedUnit  = document.getElementById('speedUnit')
 const elRpmVal     = document.getElementById('rpmVal')
+const elRpmPill    = document.getElementById('rpmPill')
+const elOdoPill    = document.getElementById('odoPill')
+const elOdometer   = document.getElementById('odometer')
+const elMileageUnit= document.getElementById('mileageUnit')
 const elVehName    = document.getElementById('vehName')
+
+const ODO_DIGITS = 6
+
+function ensureOdoDigits() {
+    if (!elOdometer || elOdometer.children.length === ODO_DIGITS) return
+    elOdometer.innerHTML = ''
+    for (let i = 0; i < ODO_DIGITS; i++) {
+        const slot = document.createElement('span')
+        slot.className = 'odo-digit'
+        const roll = document.createElement('span')
+        roll.className = 'odo-roll'
+        for (let d = 0; d < 10; d++) {
+            const dn = document.createElement('span')
+            dn.textContent = String(d)
+            roll.appendChild(dn)
+        }
+        slot.appendChild(roll)
+        elOdometer.appendChild(slot)
+    }
+}
+
+function setOdometer(value) {
+    if (!elOdometer) return
+    ensureOdoDigits()
+    const v = Math.max(0, Math.floor(Number(value) || 0))
+    const padded = String(v).padStart(ODO_DIGITS, '0').slice(-ODO_DIGITS)
+    for (let i = 0; i < ODO_DIGITS; i++) {
+        const roll = elOdometer.children[i].firstChild
+        roll.style.transform = `translateY(-${parseInt(padded[i], 10)}em)`
+    }
+}
 const elFuelPct    = document.getElementById('fuelPct')
 const elEnginePct  = document.getElementById('enginePct')
 const elSeatbelt   = document.getElementById('seatbeltPill')
@@ -91,6 +126,8 @@ const vehicleViewState = {
     fuel: 0,
     engine: 0,
     vehName: '',
+    mileage: null,
+    mileageUnit: 'MI',
     seatbelt: false,
 }
 
@@ -401,6 +438,7 @@ const handlers = {
         if (data?.redline)    { redlineRpm = data.redline; buildRedlineMarker(redlineRpm) }
         if (data?.logo)       applyLogo(data.logo)
         if (data?.menuOptions) window.__menuOptions = data.menuOptions
+        document.body.classList.toggle('jg-off', data?.jgMileage === false)
         hideMapAndStreetOnFoot = !!data?.hideMapAndStreetOnFoot
         usePSBuffs = !!data?.usePSBuffs
         applyMinimapGeo(data?.minimapGeo)
@@ -557,8 +595,20 @@ const handlers = {
         elSpeedVal.textContent  = vehicleViewState.speed ?? 0
         elSpeedUnit.textContent = vehicleViewState.unit || 'MPH'
         gearDisplay.textContent = vehicleViewState.gear || 'N'
-        elRpmVal.textContent    = rpmDisplay(vehicleViewState.rpm)
+        const rpmText = rpmDisplay(vehicleViewState.rpm)
+        elRpmVal.textContent    = rpmText
+        const elRpmLegacy = document.getElementById('rpmValLegacy')
+        if (elRpmLegacy) elRpmLegacy.textContent = rpmText
         if (vehicleViewState.vehName) elVehName.textContent = vehicleViewState.vehName
+
+        const hasMileage = vehicleViewState.mileage != null
+        if (elOdoPill) elOdoPill.classList.toggle('hidden', !hasMileage)
+        if (hasMileage) {
+            setOdometer(vehicleViewState.mileage)
+            if (elMileageUnit) {
+                elMileageUnit.textContent = (vehicleViewState.mileageUnit === 'KM') ? 'km' : 'miles'
+            }
+        }
 
         updateSpeedRing(vehicleViewState.speed)
         setSideArc(fuelArc,    elFuelPct,    vehicleViewState.fuel)
