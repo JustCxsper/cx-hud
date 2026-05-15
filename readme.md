@@ -41,7 +41,11 @@ To get the most out of `cx-hud`, ensure you have the following resources install
 
 * **Voice:** [pma-voice](https://github.com/AvarianKnight/pma-voice)
 
-* **Stress:** [jg-stress-addon](https://github.com/jgscripts/jg-stress-addon) (If you don't want to use this then just go into the fxmanifest.lua and remove the dependency section)
+
+## Optional Support
+* **Stress:** [jg-stress-addon](https://github.com/jgscripts/jg-stress-addon)
+* * **Mileage:** [jg-vehiclemileage](https://github.com/jgscripts/jg-vehiclemileage) 
+
 
 ## Installation
 
